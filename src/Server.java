@@ -13,6 +13,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
+import com.sun.corba.se.impl.ior.GenericTaggedComponent;
+
 
 
 /**
@@ -187,5 +189,13 @@ public class Server extends AbstractServer
   	rs.close();
   	stmt.close();
   }
+
+
+public static Connection getConn() {
+	return conn;
+}
+
+
+  
 }
 //End of EchoServer class
