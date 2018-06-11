@@ -58,7 +58,7 @@ public class Server extends AbstractServer
    */
   public void handleMessageFromClient
     (Object msg, ConnectionToClient client)
-  {
+   {
 	    System.out.println("Message received: " + msg + " from " + client);
 	   String Action =msg.toString().substring(0, msg.toString().indexOf(":"));
 	   if(Action.contains("Login"))

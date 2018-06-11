@@ -15,7 +15,7 @@ import java.time.format.DateTimeFormatter;
 public class ConnectionToDataBaseSQL {
 	
 	
-    private static Connection conn;
+    protected  static Connection conn;
 	public static void conncetToDataBase() throws SQLException, InstantiationException, IllegalAccessException, ClassNotFoundException {
 		  Class.forName("com.mysql.jdbc.Driver").newInstance();
 		  String url = "jdbc:mysql://cs.telhai.ac.il/Group_7";
