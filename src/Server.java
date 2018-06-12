@@ -34,7 +34,7 @@ public class Server extends AbstractServer
   /**
    * The default port to listen on.
    */
-  public static Connection conn;
+  public  Connection conn;
   final public static int DEFAULT_PORT = 5555;
   
   //Constructors ****************************************************
@@ -61,24 +61,9 @@ public class Server extends AbstractServer
   public void handleMessageFromClient
     (Object msg, ConnectionToClient client)
    {
-	    System.out.println("Message received: " + msg + " from " + client);
-	   String Action =msg.toString().substring(0, msg.toString().indexOf(":"));
-	   if(Action.contains("Login"))
-	   {
-		   try {
-			getFromDB(msg.toString(),client);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	   }
-	   if(Action.contains("Sign")) {
-		   try {
-			addtoDB(msg.toString(), client);
-		} catch (Exception e ) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	   }	    
+      ClientHandle p=new ClientHandle(msg,client,conn);	 
+      Thread Go =new Thread(p);
+      Go.start();
 	  }
   /**
    * This method overrides the one in the superclass.  Called
@@ -140,60 +125,14 @@ public class Server extends AbstractServer
   }
   public void conncetToDataBase() throws SQLException, InstantiationException, IllegalAccessException, ClassNotFoundException {
 	  Class.forName("com.mysql.jdbc.Driver").newInstance();
-	  String url = "jdbc:mysql://cs.telhai.ac.il/studentDB_cs205821473";
+	  String url = "jdbc:mysql://cs.telhai.ac.il/Group_7";
 	  String username = "cs302863774";
 	  String password = "adamsAdam132";
 	      conn = DriverManager.getConnection(url, username, password);
 	  	System.out.println("SQL connection succeed");
   }
-  public void addtoDB(String msg,ConnectionToClient client) throws SQLException, IOException {
-	  String Substring = msg.substring(msg.indexOf(":")+2, msg.length());
-		String[] parts = Substring.split(" ");
-		Statement stmt = conn.createStatement();
-	  	ResultSet rs = stmt.executeQuery("SELECT Count(UserName) FROM " +
-					"Users where UserName = '"+parts[0]+"'");
-	  	rs.next();
-	  	if(rs.getInt(1)==0) {
-	  		String exe="INSERT INTO Users VALUES " +
-    				"('"+parts[0]+"',"+parts[1]+",'"+parts[2]+"',"+parts[3]+",'"+parts[4]+"')";
-	  		stmt.executeUpdate(exe);
-	  		client.sendToClient("Done your signing");
-	  	}
-	  	else {
-	  		client.sendToClient("There is already exsist a userName like yours please try again !!");
-	  	}
-	  	rs.close();
-	  	stmt.close();
-	} 
-  
-  
-  public void getFromDB(String msg,ConnectionToClient client) throws SQLException, IOException {
-	String Substring = msg.substring(msg.indexOf(":")+2, msg.length());
-	String[] parts = Substring.split(" ");
-	Statement stmt = conn.createStatement();
-  	ResultSet rs = stmt.executeQuery("SELECT Count(UserName) FROM " +
-				"Users where UserName = '"+parts[0]+"'");
-  	rs.next();
-  	if(rs.getInt(1) == 0) {
-  		client.sendToClient("there is no userName you gave!!");
-  	}
-  	else{
-  	  	ResultSet rs2 = stmt.executeQuery("SELECT Password FROM " +
-				"Users where UserName = '"+parts[0]+"'");
-  	  	rs2.next();
-  		if(rs2.getString(1).equals(parts[1])) {
-  			client.sendToClient("Welcome !!");
-  		}
-  		rs2.close();
-  	}
-  	rs.close();
-  	stmt.close();
-  }
 
 
-public static Connection getConn() {
-	return conn;
-}
 
 
   
