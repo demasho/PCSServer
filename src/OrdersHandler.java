@@ -5,6 +5,7 @@ import java.util.Calendar;
 import java.util.Date;
 
 public class OrdersHandler extends ConnectionToDataBaseSQL {
+	
 	public static boolean  AddOneTimeOrder(String CustomerID,String ParkingID,Date TimeIn,Date TimeOut,String email,String CarNumber) 
 	{
 		Statement stmt;
@@ -28,6 +29,7 @@ public class OrdersHandler extends ConnectionToDataBaseSQL {
 		}		  	
 		return true;
 	}
+
 	
 	public static boolean  AddCasualParking(String ParkingID,Date TimeIn,Date TimeOut,String email,String CustomerID,String CarNumber) 
 	{
@@ -53,8 +55,9 @@ public class OrdersHandler extends ConnectionToDataBaseSQL {
 		}		  	
 		return true;
 	}
+
 	
-	public static boolean  AddMonthlySubscription(String ParkingID,String CustomerID,Date TimeStart,String email,Object CarNumber)
+	public static boolean  AddMonthlySubscription(String ParkingID,String CustomerID,Date TimeStart,String email,Object CarNumber,boolean IsBusniess)
 	{
 		Statement stmt;
 		try {
@@ -68,8 +71,8 @@ public class OrdersHandler extends ConnectionToDataBaseSQL {
 			String DeadLine= sdf.format(Deadline);
 			boolean isInside = false ;
 			stmt = conn.createStatement();
-			String exe="INSERT INTO MonthlySubscription (`parkingID`, `customerID`, `startedDate`, `deadline`, `email`) VALUES " +
-					"('"+ParkingID+"','"+CustomerID+"','"+startTime+"','"+DeadLine+"','"+email+"')";
+			String exe="INSERT INTO MonthlySubscription (`parkingID`, `customerID`, `startedDate`, `deadline`, `email`, `IsBusiness`) VALUES " +
+					"('"+ParkingID+"','"+CustomerID+"','"+startTime+"','"+DeadLine+"','"+email+"',"+IsBusniess+")";
 			String carStatment = "INSERT INTO Cars(`customerID`,`carNumber`,`isParked`)VALUES" + 
 					" "+"('"+CustomerID+"','"+CarNumber+"','"+isInside+"')";
 			stmt.executeUpdate(exe);
@@ -81,33 +84,33 @@ public class OrdersHandler extends ConnectionToDataBaseSQL {
 		}		  	
 		return true;
 	}
-	
-//	public static String[] getMonthlySubscriptionInfo(long subscriptionID)
-//	{ 
-//			//TODO : USERS Table
-//			Statement stmt = conn.createStatement();
-//			String result;
-//			ResultSet rs = stmt.executeQuery("SELECT Count(Subscribe) FROM " +
-//					"MonthlySubscription where Subscribe = '"+subscriptionID+"'");
-//			rs.next();
-//			if(rs.getInt(1) == 0) {
-//				result= "Wrong Subscription ID";
-//			}
-//			else{
-//				ResultSet rs2 = stmt.executeQuery("SELECT password FROM " +
-//						"Users where username = '"+username+"'");
-//				rs2.next();
-//				if(rs2.getString(1).equals(password)) {
-//					result="";
-//				}
-//				else {
-//					result="Wrong Password";
-//				}
-//				rs2.close();
-//			}
-//			rs.close();
-//			stmt.close();
-//			
-//	}
+
+	//	public static String[] getMonthlySubscriptionInfo(long subscriptionID)
+	//	{ 
+	//			//TODO : USERS Table
+	//			Statement stmt = conn.createStatement();
+	//			String result;
+	//			ResultSet rs = stmt.executeQuery("SELECT Count(Subscribe) FROM " +
+	//					"MonthlySubscription where Subscribe = '"+subscriptionID+"'");
+	//			rs.next();
+	//			if(rs.getInt(1) == 0) {
+	//				result= "Wrong Subscription ID";
+	//			}
+	//			else{
+	//				ResultSet rs2 = stmt.executeQuery("SELECT password FROM " +
+	//						"Users where username = '"+username+"'");
+	//				rs2.next();
+	//				if(rs2.getString(1).equals(password)) {
+	//					result="";
+	//				}
+	//				else {
+	//					result="Wrong Password";
+	//				}
+	//				rs2.close();
+	//			}
+	//			rs.close();
+	//			stmt.close();
+	//			
+	//	}
 
 }
