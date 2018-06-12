@@ -16,11 +16,13 @@ public class ClientHandle implements Runnable {
 	
 	public void run()
 	{
+		try {
 	    System.out.println("Message received: " + msg + " from " + client);
 	   String Action =msg.toString().substring(0, msg.toString().indexOf(":"));
 	   if(Action.contains("AddCasual"))
 	   {
 		   System.out.println("Casual Recieved by client");
+		   client.sendToClient("Done your signing");
 	   }
 	   if(Action.contains("AddMonthly"))
 	   {
@@ -36,17 +38,10 @@ public class ClientHandle implements Runnable {
 	   {
 		   System.out.println("Monthly Recieved by client");
 	   }
+		}
+		catch(Exception e ) {}
 		
 	}
-	
-	  public void sendCasualToDB(String msg,ConnectionToClient client) throws SQLException, IOException {
-			String Substring = msg.substring(msg.indexOf(":")+2, msg.length());
-			String[] parts = Substring.split(" ");
-			Statement stmt = Server.getConn().createStatement();
-		  	//ResultSet rs = stmt.executeQuery("SELECT Count(UserName) FROM " +
-			//			"Users where UserName = '"+parts[0]+"'");
-		  	stmt.close();
-		  }
-	
+
 
 }
