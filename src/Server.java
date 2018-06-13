@@ -14,7 +14,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
-import com.sun.corba.se.impl.ior.GenericTaggedComponent;
+//import com.sun.corba.se.impl.ior.GenericTaggedComponent;
 
 
 
@@ -36,6 +36,7 @@ public class Server extends AbstractServer
    * The default port to listen on.
    */
   public  Connection conn;
+  ParkingNetwork net;
   final public static int DEFAULT_PORT = 5555;
   
   //Constructors ****************************************************
@@ -113,6 +114,7 @@ public class Server extends AbstractServer
     try 
     {
       sv.conncetToDataBase();
+      ParkingNetwork net=new ParkingNetwork();
       sv.listen(); //Start listening for connections      
     } 
    catch(SQLException e) {

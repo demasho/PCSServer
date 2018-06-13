@@ -13,12 +13,14 @@ public class Parking
 	private static int carsInParking=0 ;
 	private String parkingID ;
 	private PriorityQueue<ParkingSpace> theParking ;
+	private boolean FULL;
 	public Parking(String id ,int columns)
 	{
 		parkingID = id ;	
 		Comparator<ParkingSpace> comparator = new ParkingSpace();
 		size = columns*rows*floors ;
 		theParking = new PriorityQueue<ParkingSpace>(size,comparator);
+		FULL=false;
 	}
 	
 	public boolean enterToParking(ParkingSpace space)
@@ -66,6 +68,13 @@ public class Parking
 		this.size = size;
 	}
 
+	public boolean getFull() {
+		return this.FULL;
+	}
+
+	public void setFull(boolean full) {
+		this.FULL = full;
+	}
 	public void setParkingID(String parkingID) {
 		this.parkingID = parkingID;
 	}

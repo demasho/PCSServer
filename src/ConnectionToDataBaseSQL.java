@@ -2,6 +2,7 @@ import java.io.*;
 import java.sql.Connection;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Locale;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.sql.Connection;
@@ -10,6 +11,8 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement ;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.time.format.DateTimeFormatter;
 
 public class ConnectionToDataBaseSQL {
@@ -35,17 +38,24 @@ public class ConnectionToDataBaseSQL {
 //			TIN.setYear(2018);
 //			TIN.setMonth(6);
 //			TIN.setDate(1);
-//
-//			boolean res=AddMonthlySubscription("00000000005","205821473",TIN,"dema.shofe@gmail.com",true,"02018927");
+//			java.text.SimpleDateFormat sdf = 
+//					new java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+//			
+//			String D= sdf.format(TIN);
+//			//<PARKING_ID> <CUSTOMER_ID> <STARTED_DATE> <E_MAIL> <IS_BUSINESS> <AMOUNT_OF_CARS> , <CAR_NUMBER>...<CAR_NUMBER>
+//			CasualParkingOrder(" : 00000000005 2018-06-13/21:24:00 2018-06-19/22:24:00 dema.shofe@gmail.com 205821473 00000000");
+//			;
+//			
 //		}catch(Exception e) {
 //			System.out.println(e.getMessage());
 //		}
 //	}
 
-	public static String SignIn(String username,String password) throws SQLException { 
-		//TODO : USERS Table
-		Statement stmt = conn.createStatement();
-		String result;
+	public static String Login(String username,String password) { 
+		Statement stmt;
+		String result = null;
+		try {
+			stmt = conn.createStatement();
 		ResultSet rs = stmt.executeQuery("SELECT Count(UserName) FROM " +
 				"Users where UserName = '"+username+"'");
 		rs.next();
@@ -64,90 +74,90 @@ public class ConnectionToDataBaseSQL {
 			}
 			rs2.close();
 		}
+		
 		rs.close();
 		stmt.close();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
 		return result;
 	}
 
 
-	public static boolean  AddOneTimeOrder(String CustomerID,String ParkingID,Date TimeIn,Date TimeOut,String email,String CarNumber) 
+	public static int  AddOneTimeOrder(String CustomerID,String ParkingID,String TimeIn,String TimeOut,String email,String CarNumber) 
 	{
 		Statement stmt;
+		int orderid;
 		try {
-			java.text.SimpleDateFormat sdf = 
-					new java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-			String timeIn= sdf.format(TimeIn);
-			String timeOut= sdf.format(TimeOut);
-			boolean isInside = false ;
 			stmt = ConnectionToDataBaseSQL.conn.createStatement();
 			String exe="INSERT INTO OneTimeOrders ( `customerID`, `parkingID`, `timeIn`, `timeOut`, `email`, `CarNumber`) VALUES " +
-					"('"+CustomerID+"','"+ParkingID+"','"+timeIn+"','"+timeOut+"','"+email+"','"+CarNumber+"')";
-			String carStatment = "INSERT INTO Cars(`customerID`,`carNumber`,`isParked`)VALUES" + 
-					" "+"('"+CustomerID+"','"+CarNumber+"','"+isInside+"')";
-			stmt.executeUpdate(exe);
-			stmt.executeUpdate(carStatment);
+					"('"+CustomerID+"','"+ParkingID+"','"+TimeIn+"','"+TimeOut+"','"+email+"','"+CarNumber+"')";
+			stmt.executeUpdate(exe, Statement.RETURN_GENERATED_KEYS);
+			ResultSet rs = stmt.getGeneratedKeys();
+			rs.next();
+			orderid = rs.getInt(1);
 			stmt.close();
 		} catch (SQLException e) {
 			System.out.println(e.getMessage());
-			return false;
+			return -1;
 		}		  	
-		return true;
+		return orderid;
 	}
-
-
-	public static boolean  AddCasualParking(String ParkingID,Date TimeIn,Date TimeOut,String email,String CustomerID,String CarNumber) 
+	public static int  AddCasualParking(String ParkingID,String TimeIn,String TimeOut,String email,String CustomerID,String CarNumber) 
 	{
 		Statement stmt;
+		int orderid;
 		try {
-			java.text.SimpleDateFormat sdf = 
-					new java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-			String timeIn= sdf.format(TimeIn);
-			String timeOut= sdf.format(TimeOut);
-			boolean isInside = true;
-			stmt = conn.createStatement();
 			stmt = conn.createStatement();
 			String exe="INSERT INTO CasualParking (`parkingID`, `timeIn`, `timeOut`, `email`, `customerID`, `carNumber`) VALUES " +
-					"('"+ParkingID+"','"+timeIn+"','"+timeOut+"','"+email+"','"+CustomerID+"','"+CarNumber+"')";
-			String carStatment = "INSERT INTO Cars(`customerID`,`carNumber`,`isParked`)VALUES" + 
-					" "+"('"+CustomerID+"','"+CarNumber+"','"+isInside+"')";
-			stmt.executeUpdate(exe);
-			stmt.executeUpdate(carStatment);
+					"('"+ParkingID+"','"+TimeIn+"','"+TimeOut+"','"+email+"','"+CustomerID+"','"+CarNumber+"')";
+			stmt.executeUpdate(exe, Statement.RETURN_GENERATED_KEYS);
+			ResultSet rs = stmt.getGeneratedKeys();
+			rs.next();
+			orderid = rs.getInt(1);
 			stmt.close();
 		} catch (SQLException e) {
 			System.out.println(e.getMessage());
-			return false;
+			return -1;
 		}		  	
-		return true;
+		return orderid;
 	}
-
-
-	public static boolean  AddMonthlySubscription(String ParkingID,String CustomerID,Date TimeStart,String email,boolean IsBusniess,Object CarNumber)
+	
+	public static int  AddMonthlySubscription(String ParkingID,String CustomerID,String TimeStart,String email,boolean IsBusniess,int amount,String CarsNumbers)
 	{
-		//TODO add the cars addtion
 		Statement stmt;
+		int SubscriptionID;
 		try {
 			java.text.SimpleDateFormat sdf = 
 					new java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-			String startTime= sdf.format(TimeStart);
+			String[] parts = CarsNumbers.split(" ");
+			DateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.ENGLISH);
+			Date Startdate = format.parse(TimeStart);
 			Calendar cal = Calendar.getInstance();
-			cal.setTime(TimeStart);
+			cal.setTime(Startdate);
 			cal.add(Calendar.DAY_OF_MONTH, 28); // add 28 days  
 			Date Deadline  = (Date) cal.getTime();
 			String DeadLine= sdf.format(Deadline);
-			boolean isInside = false ;
 			stmt = conn.createStatement();
 			String exe="INSERT INTO MonthlySubscription (`parkingID`, `customerID`, `startedDate`, `deadline`, `email`, `IsBusiness`) VALUES " +
-					"('"+ParkingID+"','"+CustomerID+"','"+startTime+"','"+DeadLine+"','"+email+"',"+IsBusniess+")";
-//			String carStatment = "INSERT INTO Cars(`customerID`,`carNumber`,`isParked`)VALUES" + 
-//					" "+"('"+CustomerID+"','"+CarNumber+"','"+isInside+"')";
-			stmt.executeUpdate(exe);
-			//stmt.executeUpdate(carStatment);
+					"('"+ParkingID+"','"+CustomerID+"','"+TimeStart+"','"+DeadLine+"','"+email+"',"+IsBusniess+")";
+			stmt.executeUpdate(exe,Statement.RETURN_GENERATED_KEYS);
+			ResultSet rs = stmt.getGeneratedKeys();
+			rs.next();
+			SubscriptionID = rs.getInt(1);
+			for(int i=0 ; i<amount ; i++ ) {
+				String carStatment = "INSERT INTO Cars(`customerID`,`carNumber`) VALUES" + 
+						" "+"('"+CustomerID+"','"+parts[i]+"')";
+				stmt.executeUpdate(carStatment);
+			}			
 			stmt.close();
-		} catch (SQLException e) {
+		} catch (Exception e) {
 			System.out.println(e.getMessage());
-			return false;
+			return -1;
 		}		  	
-		return true;
+		return SubscriptionID;
 	}
 
 }
