@@ -9,19 +9,17 @@ public class SendMail {
 
 		final String user = "CPS.PARKING.PROJECT@gmail.com";// change accordingly
 		final String pass = "CPS123456789";
-		
-		
 
 		// 1st step) Get the session object
 		Properties props = new Properties();
-		 props.setProperty("mail.transport.protocol", "smtp");     
-		    props.setProperty("mail.host", "smtp.gmail.com");  
-		    props.put("mail.smtp.auth", "true");  
-		    props.put("mail.smtp.port", "465");  
-		    props.put("mail.debug", "true");  
-		    props.put("mail.smtp.socketFactory.port", "465");  
-		    props.put("mail.smtp.socketFactory.class","javax.net.ssl.SSLSocketFactory");  
-		    props.put("mail.smtp.socketFactory.fallback", "false");  
+		props.setProperty("mail.transport.protocol", "smtp");     
+		props.setProperty("mail.host", "smtp.gmail.com");  
+		props.put("mail.smtp.auth", "true");  
+		props.put("mail.smtp.port", "465");  
+		props.put("mail.debug", "true");  
+		props.put("mail.smtp.socketFactory.port", "465");  
+		props.put("mail.smtp.socketFactory.class","javax.net.ssl.SSLSocketFactory");  
+		props.put("mail.smtp.socketFactory.fallback", "false");  
 
 
 		Session session = Session.getDefaultInstance(props, new javax.mail.Authenticator() {
@@ -47,30 +45,30 @@ public class SendMail {
 		}
 
 	}
-	
+
 	public static void sendLateAlertMessage(String username ,String StartDate,String ParkingID,String email){	
 		String subject = "Late for parking";
 		String msg = "Hello " + username  + ",\n"
 				+ "According to the information we have, You have reserved a parking on " + ParkingID + " Parking Lot "
-						+ "at " + StartDate + " today.\n"
-								+ "You got this email as a reminder for being late.\nYou are asked to head to the lot within 30 minutes before the reservation being canceled.\nThank you,\nCPS team.";
+				+ "at " + StartDate + " today.\n"
+				+ "You got this email as a reminder for being late.\nYou are asked to head to the lot within 30 minutes before the reservation being canceled.\nThank you,\nCPS team.";
 		SendMail.send(email, subject, msg);
 		return;
 	}
-	
+
 	public static void sendSubscriptionRenewEmail(String username ,String EndDate,String ParkingID,String email,boolean IsBusnisess){
 		String subject = "Subscription Renewal";
 		String Busniess;
-			Busniess = IsBusnisess ? 
-					 "your Business Subscription "
-					: "your Full subscription";		
-			String msg = "Hello " + username  + ",\n"
-					+ "According to the information we have, " + Busniess
-							+" will expire in " + EndDate+ ".\n"
-							+ "If you wish to continue using our services, please renew your subscription.\n\n"
-							+ "Thank you,\nCPS team.";
-			
-			SendMail.send(email, subject, msg);
+		Busniess = IsBusnisess ? 
+				"your Business Subscription "
+				: "your Full subscription";		
+		String msg = "Hello " + username  + ",\n"
+				+ "According to the information we have, " + Busniess
+				+" will expire in " + EndDate+ ".\n"
+				+ "If you wish to continue using our services, please renew your subscription.\n\n"
+				+ "Thank you,\nCPS team.";
+
+		SendMail.send(email, subject, msg);
 		return;
 	}
 }
