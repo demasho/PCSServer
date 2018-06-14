@@ -27,65 +27,113 @@ public class ConnectionToDataBaseSQL {
 		conn = DriverManager.getConnection(url, username, password);
 		System.out.println("SQL connection succeed");
 	}
-//	public static void main(String[] args) 
-//	{
-//		try {
-//			conncetToDataBase();
-//			Date TIN=new Date();
-//			TIN.setHours(12);
-//			TIN.setMinutes(30);
-//			TIN.setSeconds(50);
-//			TIN.setYear(2018);
-//			TIN.setMonth(6);
-//			TIN.setDate(1);
-//			java.text.SimpleDateFormat sdf = 
-//					new java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-//			
-//			String D= sdf.format(TIN);
-//			//<PARKING_ID> <CUSTOMER_ID> <STARTED_DATE> <E_MAIL> <IS_BUSINESS> <AMOUNT_OF_CARS> , <CAR_NUMBER>...<CAR_NUMBER>
-//			CasualParkingOrder(" : 00000000005 2018-06-13/21:24:00 2018-06-19/22:24:00 dema.shofe@gmail.com 205821473 00000000");
-//			;
-//			
-//		}catch(Exception e) {
-//			System.out.println(e.getMessage());
-//		}
-//	}
+	public static void main(String[] args) 
+	{
+		try {
+			conncetToDataBase();
+			//				Date TIN=new Date();
+			//				TIN.setHours(12);
+			//				TIN.setMinutes(30);
+			//				TIN.setSeconds(50);
+			//				TIN.setYear(2018);
+			//				TIN.setMonth(6);
+			//				TIN.setDate(1);
+			//				java.text.SimpleDateFormat sdf = 
+			//						new java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+			//				
+			//				String D= sdf.format(TIN);
+			//<PARKING_ID> <CUSTOMER_ID> <STARTED_DATE> <E_MAIL> <IS_BUSINESS> <AMOUNT_OF_CARS> , <CAR_NUMBER>...<CAR_NUMBER>
+			
+			int res=AddMonthlySubscription("222222222", "2000-10-15 15:15:15","bla@gmail.com" ,false,1,"11111111");
+			System.out.println(res);
+			//res=SignUp("adam", "adamPCS7" ,"adam","azzam","bla@gmail.com","Dancer","123456789","15");
+			System.out.println(res);
+		}catch(Exception e) {
+			System.out.println(e.getMessage());
+		}
+	}
 
 	public static String Login(String username,String password) { 
 		Statement stmt;
 		String result = null;
+		String query = "update Users set IsOneConnected = ? where username = ?";
 		try {
 			stmt = conn.createStatement();
-		ResultSet rs = stmt.executeQuery("SELECT Count(UserName) FROM " +
-				"Users where UserName = '"+username+"'");
-		rs.next();
-		if(rs.getInt(1) == 0) {
-			result= "Wrong UserName";
-		}
-		else{
-			ResultSet rs2 = stmt.executeQuery("SELECT Password FROM " +
-					"Users where UserName = '"+username+"'");
-			rs2.next();
-			if(rs2.getString(1).equals(password)) {
-				result="";
+			ResultSet rs = stmt.executeQuery("SELECT Count(userName) FROM " +
+					"Users where username = '"+username+"'");
+			rs.next();
+			if(rs.getInt(1) == 0) {
+				result= "There Is No UserName : "+username;
 			}
-			else {
-				result="Wrong Password";
+			else{
+				ResultSet rs2 = stmt.executeQuery("SELECT password , IsOneConnected FROM " +
+						"Users where username = '"+username+"'");
+				rs2.next();
+				if(rs2.getString(1).equals(password))
+				{
+					if(rs2.getBoolean(2)==false)
+					{
+						PreparedStatement preparedStmt = conn.prepareStatement(query);
+						preparedStmt.setBoolean (1,true);
+						preparedStmt.setString (2,username);
+						preparedStmt.executeUpdate();
+						result="Welcome";
+					}else {
+						result="You Can't Access There Is Already Someone In";
+					}			
+				}
+				else {
+					result="Wrong Password";
+				}
+				rs2.close();
 			}
-			rs2.close();
-		}
-		
-		rs.close();
-		stmt.close();
+			rs.close();
+			stmt.close();
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-
 		return result;
 	}
 
+	public static void LogOut(String username) {
+		try {
+			String query = "update Users set IsOneConnected = ? where username = ?";
+			PreparedStatement preparedStmt = conn.prepareStatement(query);
+			preparedStmt.setBoolean (1,false);
+			preparedStmt.setString (2,username);
+			preparedStmt.executeUpdate();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	public static String  SignUp(String username ,String password, String firstName,String  lastName , String  email,String  role, String WorkerID,String ParkingID) 
+	{
+		Statement stmt;
+		String result=null;
+		try {
 
+			stmt = ConnectionToDataBaseSQL.conn.createStatement();
+			ResultSet rs = stmt.executeQuery("SELECT Count(userName) FROM " +
+					"Users where username = '"+username+"'");
+			rs.next();
+			System.out.println(rs.getInt(1));
+			if(rs.getInt(1) != 0) {
+				result= "There Is Aleardy someone with the same UserName : "+username;
+			}
+			else {
+				String exe="INSERT INTO  Users (`username`, `password`, `firstName`, `lastName`, `email`, `role`, `WorkerID`, `IsOneConnected`, `parkingID`) VALUES" +
+						"('"+username+"','"+password+"','"+firstName+"','"+lastName+"','"+email+"','"+role+"','"+WorkerID +"',"+false+",'"+ParkingID+"')";
+				stmt.executeUpdate(exe);
+				result="Done SignUp";
+			}
+			stmt.close();
+		} catch (SQLException e) {
+			System.out.println(e.getMessage());
+		}		  	
+		return result;
+	}
 	public static int  AddOneTimeOrder(String CustomerID,String ParkingID,String TimeIn,String TimeOut,String email,String CarNumber) 
 	{
 		Statement stmt;
@@ -124,8 +172,8 @@ public class ConnectionToDataBaseSQL {
 		}		  	
 		return orderid;
 	}
-	
-	public static int  AddMonthlySubscription(String ParkingID,String CustomerID,String TimeStart,String email,boolean IsBusniess,int amount,String CarsNumbers)
+
+	public static int  AddMonthlySubscription(String CustomerID,String TimeStart,String email,boolean IsBusniess,int amount,String CarsNumbers)
 	{
 		Statement stmt;
 		int SubscriptionID;
@@ -141,8 +189,8 @@ public class ConnectionToDataBaseSQL {
 			Date Deadline  = (Date) cal.getTime();
 			String DeadLine= sdf.format(Deadline);
 			stmt = conn.createStatement();
-			String exe="INSERT INTO MonthlySubscription (`parkingID`, `customerID`, `startedDate`, `deadline`, `email`, `IsBusiness`) VALUES " +
-					"('"+ParkingID+"','"+CustomerID+"','"+TimeStart+"','"+DeadLine+"','"+email+"',"+IsBusniess+")";
+			String exe="INSERT INTO MonthlySubscription (`customerID`, `startedDate`, `deadline`, `email`, `IsBusiness`) VALUES " +
+					"('"+CustomerID+"','"+TimeStart+"','"+DeadLine+"','"+email+"',"+IsBusniess+")";
 			stmt.executeUpdate(exe,Statement.RETURN_GENERATED_KEYS);
 			ResultSet rs = stmt.getGeneratedKeys();
 			rs.next();

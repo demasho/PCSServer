@@ -36,10 +36,13 @@ public class ClientHandle implements Runnable {
 				MonthlySubscription(msg.toString(), client);
 				break;
 			case "SignUp":
-				System.out.println("one");
+				SignUpWorker(msg.toString(), client);
 				break;
 			case "Login":
-				System.out.println("two");
+				LoginWorker(msg.toString(),client);
+				break;
+			case "Logout":
+				LogOutWorker(msg.toString(),client);
 				break;
 			case "UPDATING_PRICES":
 				System.out.println("three");
@@ -97,13 +100,43 @@ public class ClientHandle implements Runnable {
 				String status = answer==-1 ?  " Failed Try Again Later" :  " Sucessed , your Odred id = "+ answer ;
 				client.sendToClient("Your Order is"+ status);
 			}
-			
+
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	} 
+	//<USERNAME> <PASSWORD>
+	public void LoginWorker(String msg,ConnectionToClient client) {
+		try {
+			String Substring = msg.substring(msg.indexOf(":")+2, msg.length());
+			String[] parts = Substring.split(" ");
+			String answer= ConnectionToDataBaseSQL.Login(parts[0], parts[1]); 
+			client.sendToClient(answer);
 
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	//<FIRST_NAME> <LAST_NAME> <WORKER_ID> <E-MAIL> <ROLE> <ParkingID> <USERNAME> <PASSWORD>
+	public void SignUpWorker(String msg,ConnectionToClient client) {
+		try {
+			String Substring = msg.substring(msg.indexOf(":")+2, msg.length());
+			String[] parts = Substring.split(" ");
+			String answer= ConnectionToDataBaseSQL.SignUp(parts[6], parts[7], parts[0], parts[1], parts[3], parts[4], parts[2],parts[5]); 
+			client.sendToClient(answer);
+
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	public void LogOutWorker(String msg,ConnectionToClient client) {
+			String Substring = msg.substring(msg.indexOf(":")+2, msg.length());
+			String[] parts = Substring.split(" ");
+            ConnectionToDataBaseSQL.LogOut(parts[0]); 
+	}
 	//<PARKING_ID> <ENTRY_DATE> <RELEASE_DATE> <E-MAIL> <CUSTOMER_ID> <CAR_NUMBER>
 	public void CasualParkingOrder(String msg,ConnectionToClient client) {
 		try {
@@ -119,33 +152,33 @@ public class ClientHandle implements Runnable {
 				String status = answer==-1 ?  " Failed Try Again Later" :  " Sucessed , your Odred id = "+ answer ;
 				client.sendToClient("Your Order is"+ status);
 			}
-			
+
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	} 
-	
-	//<PARKING_ID> <CUSTOMER_ID> <STARTED_DATE> <E_MAIL> <IS_BUSINESS> <AMOUNT_OF_CARS> , <CAR_NUMBER>...<CAR_NUMBER>
+
+	//<CUSTOMER_ID> <STARTED_DATE> <E_MAIL> <IS_BUSINESS> <AMOUNT_OF_CARS> , <CAR_NUMBER>...<CAR_NUMBER>
 	public void MonthlySubscription(String msg,ConnectionToClient client) {
 		try {
 			String Substring = msg.substring(msg.indexOf(":")+2, msg.length());
 			int indexofcomm = msg.indexOf(",")+2;
 			String AllCars= msg.substring(indexofcomm, msg.length());
 			String[] parts = Substring.split(" ");
-			int amountofcars=Integer.parseInt(parts[5]);
-			boolean IsB = Boolean.parseBoolean(parts[4]);
-			String startdate=parts[2].replace("/", " ");
-				int answer= ConnectionToDataBaseSQL.AddMonthlySubscription(parts[0], parts[1],startdate, parts[3],IsB,amountofcars,AllCars); 
-				String status = answer==-1 ?  " Failed Try Again Later" :  " Sucessed , your Odred id = "+ answer ;
-				client.sendToClient("Your Subscription ID is"+ status);			
+			int amountofcars=Integer.parseInt(parts[4]);
+			boolean IsB = Boolean.parseBoolean(parts[3]);
+			String startdate=parts[1].replace("/", " ");
+			int answer= ConnectionToDataBaseSQL.AddMonthlySubscription(parts[0],startdate, parts[2],IsB,amountofcars,AllCars); 
+			String status = answer==-1 ?  " Failed Try Again Later" :  " Sucessed , your Odred id = "+ answer ;
+			client.sendToClient("Your Subscription ID is"+ status);			
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	} 
-	
-	
+
+
 	public void getFromDB(String msg,ConnectionToClient client) throws SQLException, IOException {
 		String Substring = msg.substring(msg.indexOf(":")+2, msg.length());
 		String[] parts = Substring.split(" ");
