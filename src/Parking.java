@@ -15,10 +15,9 @@ public class Parking
 	private String parkingID ;
 	private PriorityQueue<ParkingSpace> theParking ;
 	private Vector<Point3D> badSpaces ;
-	private int catchedSpaces ;
+	private Vector<String> savedSpaces ;
 	public Parking(String id ,int columns)
 	{
-		catchedSpaces = 0 ;
 		carsInParking=0 ;
 		parkingID = id ;	
 		Comparator<ParkingSpace> comparator = new ParkingSpace();
@@ -30,7 +29,14 @@ public class Parking
 	public boolean enterToParking(Date deadline , String orderid , String carID)
 	{
 		ParkingSpace space = new ParkingSpace(deadline,orderid,carID);
-		if(carsInParking < size - catchedSpaces)
+		if(savedSpaces.contains(orderid))
+		{
+			theParking.add(space);
+			savedSpaces.remove(orderid);
+			carsInParking++ ;
+			return true ;
+		}
+		if(carsInParking < size - savedSpaces.size())
 		{
 			theParking.add(space);
 			carsInParking++ ;
@@ -175,31 +181,31 @@ public class Parking
 		--carsInParking;
 	}
 	
-	//return true if the parking is not full and succeeded booking a parkSpace   
-	public boolean addCatchedSpace()
+	//return true if the parking is not full and succeeded saving a parkSpace   
+	public boolean addSavedSpace(String orderId)
 	{
 		if(carsInParking < size)
 		{
-			++catchedSpaces;
+			savedSpaces.addElement(orderId);;
 			return true ;
 		}
 		return false ;
 	}
 	
 	//use this before entering the parking for booked spot , returns true if succeed
-	public boolean removeCatchedSpace()
+	public boolean removeSavedSpace(String orderId)
 	{
-		if(catchedSpaces > 0)
+		if(savedSpaces.contains(orderId))
 		{
-			--catchedSpaces;
+			savedSpaces.remove(orderId);
 			return true ;
 		}
 		return false ;
 	}
 	
-	public boolean isThereCatchedSpaces()
+	public boolean isThereSavedSpaces()
 	{
-		return catchedSpaces>0 ;
+		return savedSpaces.size()>0 ;
 	}
 	
 	public boolean isFull()

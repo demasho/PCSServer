@@ -4,6 +4,9 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Date;
+
+import javafx.geometry.Point3D;
+
 import java.sql.Connection;
 
 
@@ -66,16 +69,13 @@ public class ClientHandle implements Runnable {
 				System.out.println("three");
 				break;
 			case "DISABLED_PLACES_SYSTEM":
-				System.out.println("one");
-				break;
-			case "REPORTS_FULL_PARKING_CONDITION":
-				System.out.println("two");
+				 disabledParkingSpace(msg.toString(),client);
 				break;
 			case "INIT_SIZE_OF_PARKING":
-				System.out.println("three");
+				addNewParking(msg.toString(), client);
 				break;
 			case "SAVING_PARKING_SPACE":
-				System.out.println("one");
+				savingParkingSpace(msg.toString(),client);
 				break;
 			default:
 				System.out.println("no match");
@@ -146,7 +146,12 @@ public class ClientHandle implements Runnable {
 			String enddate=parts[2].replace("/", " ");
 			if(ParkingNetwork.IsParkFULL(parts[1])== true)
 			{
-				client.sendToClient("Order Failed The ParkingLot that you ordered is full !!");
+				String availables = ParkingNetwork.getAvailableParkings();
+				if(availables.isEmpty())
+					client.sendToClient("Order Failed The ParkingLot that you ordered is full!!");
+				else 
+					client.sendToClient("Order Failed The ParkingLot that you ordered is full ,"
+							+ "Alternative parkings : "+availables);
 			}else {
 				int answer= ConnectionToDataBaseSQL.AddCasualParking(parts[0], startdate, enddate, parts[3], parts[4], parts[5]); 
 				String status = answer==-1 ?  " Failed Try Again Later" :  " Sucessed , your Odred id = "+ answer ;
@@ -177,6 +182,100 @@ public class ClientHandle implements Runnable {
 			e.printStackTrace();
 		}
 	} 
+	
+	//<PARKING_ID> <SPACE_LOCATION>
+	public void disabledParkingSpace(String msg,ConnectionToClient client)
+	{
+		try {
+			String Substring = msg.substring(msg.indexOf(":")+2, msg.length());
+			String[] parts = Substring.split(" ");
+			Parking parking =null ;
+			if(ParkingNetwork.containsParking(parts[0]))
+				parking = ParkingNetwork.getParking(parts[0]);
+			else{
+					client.sendToClient(parts[0] + " is not exist");
+					return ;
+			}
+			String point = parts[1].substring(msg.indexOf("("), msg.length()-1);
+			String[] pointParts = point.split(",");
+			int x = Integer.parseInt(pointParts[0]);
+			int y = Integer.parseInt(pointParts[1]);
+			int z = Integer.parseInt(pointParts[2]);
+			Point3D location = null ;
+			if(x < parking.getColumns() && y < parking.getRows()
+					&& z < parking.getFloor())
+				location = new Point3D(x, y, z);
+			else {
+				client.sendToClient("Incorrect spot: "+parts[1]);
+				return ;
+			}
+			parking.addBadSpace(location);
+			client.sendToClient(parts[1] + " in " + parts[0]
+					+" updated to be {disabled space} succefully");
+		}
+		catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
+	//<PARKING_ID> <ORDER_ID>
+	public void savingParkingSpace(String msg,ConnectionToClient client)
+	{
+		try {
+			String Substring = msg.substring(msg.indexOf(":")+2, msg.length());
+			String[] parts = Substring.split(" ");
+			Parking parking =null ;
+			if(ParkingNetwork.containsParking(parts[0]))
+				parking = ParkingNetwork.getParking(parts[0]);
+			else{
+					client.sendToClient(parts[0] + " is not exist");
+					return ;
+			}
+			boolean res = parking.addSavedSpace(parts[1]);
+			if(res == true)
+				client.sendToClient("Saving parking space for order number "
+						+parts[1]+": SUCCEEDED");
+			else client.sendToClient("Saving parking space for order number "
+					+parts[1]+": FAILED");
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
+	//<PARKING_ID> <COLUMNS>
+	public void addNewParking(String msg,ConnectionToClient client)
+	{
+		try {
+			String Substring = msg.substring(msg.indexOf(":")+2, msg.length());
+			String[] parts = Substring.split(" ");
+			int columns = Integer.parseInt(parts[1]);
+			if(columns > 8 || columns < 4)
+			{
+				client.sendToClient("FAILED: columns size must be 4-8");
+				return ;
+			}
+			if(ParkingNetwork.containsParking(parts[0]))
+			{
+				client.sendToClient("FAILED: "+parts[0]+" Parking is exists");
+				return ;
+			}
+			boolean added = ParkingNetwork.AddParkingLot(parts[0], columns);
+			if(added)
+			{
+				client.sendToClient("SUCCEEDED: "+parts[0]+" has been added");
+				return ;
+			}
+			else client.sendToClient("FAILED: Try Again Later");
+		} catch (NumberFormatException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
 
 
 	public void getFromDB(String msg,ConnectionToClient client) throws SQLException, IOException {
