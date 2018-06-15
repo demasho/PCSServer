@@ -1,31 +1,34 @@
 import java.util.Comparator;
-import java.util.Date;
 import java.util.PriorityQueue;
-import java.util.Queue;
 import java.util.Stack;
-
+import java.util.Vector;
+import javafx.geometry.Point3D;
 
 public class Parking 
 {
 	private final int rows = 3 ;
 	private final int floors = 3 ;
+	private int columns ;
 	private int size ;
-	private static int carsInParking=0 ;
+	private int carsInParking ;
 	private String parkingID ;
 	private PriorityQueue<ParkingSpace> theParking ;
-	private boolean FULL;
+	private Vector<Point3D> badSpaces ;
+	private int catchedSpaces ;
 	public Parking(String id ,int columns)
 	{
+		catchedSpaces = 0 ;
+		carsInParking=0 ;
 		parkingID = id ;	
 		Comparator<ParkingSpace> comparator = new ParkingSpace();
+		this.columns = columns ;
 		size = columns*rows*floors ;
 		theParking = new PriorityQueue<ParkingSpace>(size,comparator);
-		FULL=false;
 	}
 	
 	public boolean enterToParking(ParkingSpace space)
 	{
-		if(carsInParking < size)
+		if(carsInParking < size - catchedSpaces)
 		{
 			theParking.add(space);
 			carsInParking++ ;
@@ -56,7 +59,189 @@ public class Parking
 		return found ;
 	}
 	
+	public String getSnapshot()
+	{
+		int content = carsInParking ;
+		StringBuilder strBul = new StringBuilder() ;
+		int x=0 , y=0 , z=0 , badSpotCounter = badSpaces.size() ;
+		while(content > 0)
+		{
+			Point3D p = new Point3D(x,y,z);
+			if(x < columns && !badSpaces.contains(p))
+			{
+				strBul.append("P(");
+				strBul.append(x);
+				strBul.append(',');
+				strBul.append(y);
+				strBul.append(',');
+				strBul.append(z);
+				strBul.append(") ");
+				--content ;
+				++x ;
+				continue ;
+			}
+			else if(x < columns && badSpaces.contains(p))
+			{
+				strBul.append("B(");
+				strBul.append(x);
+				strBul.append(',');
+				strBul.append(y);
+				strBul.append(',');
+				strBul.append(z);
+				strBul.append(") ");
+				--badSpotCounter ;
+				--content ;
+				++x ;
+				continue ;
+			}
+			if(x >= columns && y<rows)
+			{
+				++y;
+				x=0;
+				continue ;
+			}
+			if(x >= columns && y >= rows && z < floors)
+			{
+				++z ;
+				y=0 ;
+				x=0 ;
+			}
+		}
+		int available = size - carsInParking + badSpotCounter ;
+		while(available < size )
+		{
+			Point3D p = new Point3D(x,y,z);
+			if(x < columns && !badSpaces.contains(p))
+			{
+				strBul.append("A(");
+				strBul.append(x);
+				strBul.append(',');
+				strBul.append(y);
+				strBul.append(',');
+				strBul.append(z);
+				strBul.append(") ");
+				--content ;
+				++x ;
+				continue ;
+			}
+			else if(x < columns && badSpaces.contains(p))
+			{
+				strBul.append("B(");
+				strBul.append(x);
+				strBul.append(',');
+				strBul.append(y);
+				strBul.append(',');
+				strBul.append(z);
+				strBul.append(") ");
+				--badSpotCounter ;
+				--content ;
+				++x ;
+				continue ;
+			}
+			if(x >= columns && y<rows)
+			{
+				++y;
+				x=0;
+				continue ;
+			}
+			if(x >= columns && y >= rows && z < floors)
+			{
+				++z ;
+				y=0 ;
+				x=0 ;
+			}
+		}
+		
+		return strBul.toString() ;
+	}
+	
+	public void addBadSpace(Point3D p)
+	{
+		if(p.getX() < columns && p.getY() < rows && p.getY() < floors)
+		{
+			badSpaces.addElement(p);
+		}
+		++carsInParking;
+	}
+	
+	public void removeBadSpace(Point3D p)
+	{
+		if(badSpaces.contains(p))
+		{
+			badSpaces.removeElement(p);
+		}
+		--carsInParking;
+	}
+	
+	//return true if the parking is not full and succeeded booking a parkSpace   
+	public boolean addCatchedSpace()
+	{
+		if(carsInParking < size)
+		{
+			++catchedSpaces;
+			return true ;
+		}
+		return false ;
+	}
+	
+	//use this before entering the parking for booked spot , returns true if succeed
+	public boolean removeCatchedSpace()
+	{
+		if(catchedSpaces > 0)
+		{
+			--catchedSpaces;
+			return true ;
+		}
+		return false ;
+	}
+	
+	public boolean isThereCatchedSpaces()
+	{
+		return catchedSpaces>0 ;
+	}
+	
+	public boolean isFull()
+	{
+		return carsInParking == size ;
+	}
+	
+	public String getBadSpaces()
+	{
+		StringBuilder str = new StringBuilder() ;
+		if(!badSpaces.isEmpty())
+		{
+			for (Point3D p : badSpaces)
+			{
+				str.append("B(");
+				str.append(p.getX());
+				str.append(',');
+				str.append(p.getY());
+				str.append(',');
+				str.append(p.getZ());
+				str.append(") ");
+			}
+			return str.toString();
+		}
+		return "" ;
+	}
+	
+	public boolean fixBadSpace(Point3D p)
+	{
+		if(badSpaces.contains(p))
+		{
+			badSpaces.remove(p);
+			return true ;
+		}
+		return false ;
+	}
+	
 	//getters and setters 	
+	public int getColumns() {
+		return columns;
+	}
+	public void setColumns(int columns) {
+		this.columns = columns;
+	}
 	public String getParkingID() {
 		return parkingID;
 	}
@@ -68,13 +253,6 @@ public class Parking
 		this.size = size;
 	}
 
-	public boolean getFull() {
-		return this.FULL;
-	}
-
-	public void setFull(boolean full) {
-		this.FULL = full;
-	}
 	public void setParkingID(String parkingID) {
 		this.parkingID = parkingID;
 	}
@@ -90,6 +268,4 @@ public class Parking
 	public int getFloor() {
 		return floors;
 	}
-	
-
 }
