@@ -1,19 +1,14 @@
-import java.io.*;
 import java.sql.Connection;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 import java.sql.DriverManager;
 import java.sql.SQLException;
-import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.sql.Statement ;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.time.format.DateTimeFormatter;
 
 public class ConnectionToDataBaseSQL {
 
@@ -43,16 +38,31 @@ public class ConnectionToDataBaseSQL {
 			//				
 			//				String D= sdf.format(TIN);
 			//<PARKING_ID> <CUSTOMER_ID> <STARTED_DATE> <E_MAIL> <IS_BUSINESS> <AMOUNT_OF_CARS> , <CAR_NUMBER>...<CAR_NUMBER>
-			
-			int res=AddMonthlySubscription("222222222", "2000-10-15 15:15:15","bla@gmail.com" ,false,1,"11111111");
-			System.out.println(res);
-			//res=SignUp("adam", "adamPCS7" ,"adam","azzam","bla@gmail.com","Dancer","123456789","15");
-			System.out.println(res);
+
+			//			int res=AddMonthlySubscription("222222222", "2000-10-15 15:15:15","bla@gmail.com" ,false,1,"11111111");
+			//			System.out.println(res);
+			//			//res=SignUp("adam", "adamPCS7" ,"adam","azzam","bla@gmail.com","Dancer","123456789","15");
+			//			System.out.println(res);
+			Monitoring s= new Monitoring();
+			s.StartMonitoringSubscripers();
 		}catch(Exception e) {
 			System.out.println(e.getMessage());
 		}
 	}
-
+	public static  ResultSet GetAllSubscriper()
+	{
+		Statement stmt; 
+		ResultSet rs =null;
+		try {
+			stmt = conn.createStatement();
+			rs = stmt.executeQuery("SELECT SubscribeID,deadline, email, IsBusiness  FROM " +
+					"MonthlySubscription");
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return rs;
+	}
 	public static String Login(String username,String password) { 
 		Statement stmt;
 		String result = null;

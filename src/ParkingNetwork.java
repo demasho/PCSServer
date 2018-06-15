@@ -23,7 +23,7 @@ public class ParkingNetwork {
 	public static boolean IsParkFULL(String ParkingId) {
 		if(parknet.containsKey(ParkingId)==false)
 			return true;
-		return parknet.get(ParkingId).getFull();
+		return parknet.get(ParkingId).isFull();
 	}
 
 }
