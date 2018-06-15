@@ -1,4 +1,5 @@
 import java.util.Comparator;
+import java.util.Date;
 import java.util.PriorityQueue;
 import java.util.Stack;
 import java.util.Vector;
@@ -26,8 +27,9 @@ public class Parking
 		theParking = new PriorityQueue<ParkingSpace>(size,comparator);
 	}
 	
-	public boolean enterToParking(ParkingSpace space)
+	public boolean enterToParking(Date deadline , String orderid , String carID)
 	{
+		ParkingSpace space = new ParkingSpace(deadline,orderid,carID);
 		if(carsInParking < size - catchedSpaces)
 		{
 			theParking.add(space);

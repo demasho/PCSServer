@@ -5,17 +5,17 @@ import java.util.Date;
 public class ParkingSpace implements Comparator<ParkingSpace>
 {
 	private Date deadline ;
-	private int x ;
-	private int y ;
-	private int z ;
 	private String carID ;
-	private String OrderID ;
+	private String orderID ;
 	private boolean available ;
 	
 	public ParkingSpace(){}
-	public ParkingSpace(Date deadline)
+	public ParkingSpace(Date deadline , String orderid , String carID)
 	{
 		this.deadline = deadline ;
+		this.orderID = orderid ;
+		this.carID = carID ;
+		available = false ;
 	}
 
 	
@@ -30,11 +30,11 @@ public class ParkingSpace implements Comparator<ParkingSpace>
 	}
 
 	public String getOrderID() {
-		return OrderID;
+		return orderID;
 	}
 
 	public void setOrderID(String orderID) {
-		OrderID = orderID;
+		this.orderID = orderID;
 	}
 	public Date getDeadline() {
 		return deadline;
@@ -42,30 +42,6 @@ public class ParkingSpace implements Comparator<ParkingSpace>
 
 	public void setDeadline(Date deadline) {
 		this.deadline = deadline;
-	}
-
-	public int getX() {
-		return x;
-	}
-
-	public void setX(int x) {
-		this.x = x;
-	}
-
-	public int getY() {
-		return y;
-	}
-
-	public void setY(int y) {
-		this.y = y;
-	}
-
-	public int getZ() {
-		return z;
-	}
-
-	public void setZ(int z) {
-		this.z = z;
 	}
 
 	public boolean isAvailable() {
