@@ -196,7 +196,8 @@ public class ClientHandle implements Runnable {
 					client.sendToClient(parts[0] + " is not exist");
 					return ;
 			}
-			String point = parts[1].substring(msg.indexOf("("), msg.length()-1);
+
+			String point = parts[1].substring(parts[1].indexOf("(")+1, parts[1].length()-1);
 			String[] pointParts = point.split(",");
 			int x = Integer.parseInt(pointParts[0]);
 			int y = Integer.parseInt(pointParts[1]);

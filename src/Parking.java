@@ -14,8 +14,8 @@ public class Parking
 	private int carsInParking ;
 	private String parkingID ;
 	private PriorityQueue<ParkingSpace> theParking ;
-	private Vector<Point3D> badSpaces ;
-	private Vector<String> savedSpaces ;
+	private Vector<Point3D> badSpaces = new Vector<Point3D>() ;
+	private Vector<String> savedSpaces = new Vector<String>();
 	public Parking(String id ,int columns)
 	{
 		carsInParking=0 ;
