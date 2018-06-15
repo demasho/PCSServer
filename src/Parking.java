@@ -260,7 +260,6 @@ public class Parking
 	public void setSize(int size) {
 		this.size = size;
 	}
-
 	public void setParkingID(String parkingID) {
 		this.parkingID = parkingID;
 	}

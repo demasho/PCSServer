@@ -277,7 +277,6 @@ public class ClientHandle implements Runnable {
 		}
 	}
 
-
 	public void getFromDB(String msg,ConnectionToClient client) throws SQLException, IOException {
 		String Substring = msg.substring(msg.indexOf(":")+2, msg.length());
 		String[] parts = Substring.split(" ");
