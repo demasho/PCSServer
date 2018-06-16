@@ -1,3 +1,4 @@
+import java.io.IOException;
 import java.sql.Connection;
 import java.util.Calendar;
 import java.util.Date;
@@ -43,12 +44,40 @@ public class ConnectionToDataBaseSQL {
 			//			System.out.println(res);
 			//			//res=SignUp("adam", "adamPCS7" ,"adam","azzam","bla@gmail.com","Dancer","123456789","15");
 			//			System.out.println(res);
-			Monitoring s= new Monitoring();
-			s.StartMonitoringSubscripers();
+		//	UPDATING_PRICES1(" : 10.0 10.0 10.0 10.0");
+		//	Monitoring s= new Monitoring();
+		//	s.StartMonitoringSubscripers();
 		}catch(Exception e) {
 			System.out.println(e.getMessage());
 		}
 	}
+	
+	/*****************************************************************************************/
+	//`CasualParking`, `OneTimeOrders`, `FullMonthlySubscription`, `BusinessMonthlySubscription`, `status`
+	public static String UPDATING_PRICES (double CasualParking,double OneTimeOrder,double FullMonthlySubscription,double BusinessMonthlySubscription){	
+
+		Statement stmt;
+		String result = null;
+		try {
+			stmt = conn.createStatement();
+			String query="INSERT INTO Prices (`CasualParking`,`OneTimeOrders`,`FullMonthlySubscription`,`BusinessMonthlySubscription`,`status`) VALUES " +
+					"("+CasualParking+","+OneTimeOrder+","+FullMonthlySubscription+","+BusinessMonthlySubscription+",'New')";
+			System.out.println(query);
+			 stmt.executeUpdate(query);
+			result="Updating is Successed";	
+			stmt.close();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			System.out.println("You Can't make Updating Sorry!!");
+			e.printStackTrace();
+			result="You Can't make Updating Sorry!!";
+			return result;
+		}
+		return result;
+	}
+	
+	
+	/****************************************************************************************/
 	public static  ResultSet GetAllSubscriper()
 	{
 		Statement stmt; 

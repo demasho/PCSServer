@@ -5,6 +5,8 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Date;
 
+import com.mysql.jdbc.Util;
+
 import javafx.geometry.Point3D;
 
 import java.sql.Connection;
@@ -68,7 +70,7 @@ public class ClientHandle implements Runnable {
 				System.out.println("three");
 				break;
 			case "DISABLED_PLACES_SYSTEM":
-				 disabledParkingSpace(msg.toString(),client);
+				disabledParkingSpace(msg.toString(),client);
 				break;
 			case "INIT_SIZE_OF_PARKING":
 				addNewParking(msg.toString(), client);
@@ -118,6 +120,21 @@ public class ClientHandle implements Runnable {
 			e.printStackTrace();
 		}
 	}
+	/***********************************************************************************/
+	/***********************************************************************************/
+	// <NEW_PRICE_FOR_OneTimeOrders> <NEW_PRICE_FOR_CasualParking> <NEW_PRICE_FOR_FullMonthlySubscription> <NEW_PRICE_FOR_BusinessMonthlySubscription>
+	public static void UPDATING_PRICES1(String msg)
+	{
+		String Substring = msg.substring(msg.indexOf(":")+2, msg.length());
+		String[] parts=Substring.split(" ");
+		double CasualParking =Double.parseDouble(parts[1]);
+		double OneTimeOrders =Double.parseDouble(parts[0]);
+		double FullMonthlySubscription =Double.parseDouble(parts[2]);
+		double BusinessMonthlySubscription =Double.parseDouble(parts[3]);
+		String answer= ConnectionToDataBaseSQL.UPDATING_PRICES(CasualParking, OneTimeOrders, FullMonthlySubscription, BusinessMonthlySubscription); 
+	}
+	/**********************************************************************************/
+	/**********************************************************************************/
 	//<FIRST_NAME> <LAST_NAME> <WORKER_ID> <E-MAIL> <ROLE> <ParkingID> <USERNAME> <PASSWORD>
 	public void SignUpWorker(String msg,ConnectionToClient client) {
 		try {
@@ -132,9 +149,9 @@ public class ClientHandle implements Runnable {
 		}
 	}
 	public void LogOutWorker(String msg,ConnectionToClient client) {
-			String Substring = msg.substring(msg.indexOf(":")+2, msg.length());
-			String[] parts = Substring.split(" ");
-            ConnectionToDataBaseSQL.LogOut(parts[0]); 
+		String Substring = msg.substring(msg.indexOf(":")+2, msg.length());
+		String[] parts = Substring.split(" ");
+		ConnectionToDataBaseSQL.LogOut(parts[0]); 
 	}
 	//<PARKING_ID> <ENTRY_DATE> <RELEASE_DATE> <E-MAIL> <CUSTOMER_ID> <CAR_NUMBER>
 	public void CasualParkingOrder(String msg,ConnectionToClient client) {
@@ -181,7 +198,7 @@ public class ClientHandle implements Runnable {
 			e.printStackTrace();
 		}
 	} 
-	
+
 	//<PARKING_ID> <SPACE_LOCATION>
 	public void disabledParkingSpace(String msg,ConnectionToClient client)
 	{
@@ -192,8 +209,8 @@ public class ClientHandle implements Runnable {
 			if(ParkingNetwork.containsParking(parts[0]))
 				parking = ParkingNetwork.getParking(parts[0]);
 			else{
-					client.sendToClient(parts[0] + " is not exist");
-					return ;
+				client.sendToClient(parts[0] + " is not exist");
+				return ;
 			}
 
 			String point = parts[1].substring(parts[1].indexOf("(")+1, parts[1].length()-1);
@@ -218,7 +235,7 @@ public class ClientHandle implements Runnable {
 			e.printStackTrace();
 		}
 	}
-	
+
 	//<PARKING_ID> <ORDER_ID>
 	public void savingParkingSpace(String msg,ConnectionToClient client)
 	{
@@ -229,8 +246,8 @@ public class ClientHandle implements Runnable {
 			if(ParkingNetwork.containsParking(parts[0]))
 				parking = ParkingNetwork.getParking(parts[0]);
 			else{
-					client.sendToClient(parts[0] + " is not exist");
-					return ;
+				client.sendToClient(parts[0] + " is not exist");
+				return ;
 			}
 			boolean res = parking.addSavedSpace(parts[1]);
 			if(res == true)
@@ -243,7 +260,7 @@ public class ClientHandle implements Runnable {
 			e.printStackTrace();
 		}
 	}
-	
+
 	//<PARKING_ID> <COLUMNS>
 	public void addNewParking(String msg,ConnectionToClient client)
 	{
@@ -276,7 +293,7 @@ public class ClientHandle implements Runnable {
 			e.printStackTrace();
 		}
 	}
-	
+
 	public void getParkingSnapshot(String msg,ConnectionToClient client)
 	{
 		try {
@@ -315,4 +332,4 @@ public class ClientHandle implements Runnable {
 		rs.close();
 		stmt.close();
 	}
-}
+	/***********************************************************************************/
