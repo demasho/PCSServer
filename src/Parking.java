@@ -69,7 +69,7 @@ public class Parking
 	
 	public String getSnapshot()
 	{
-		int content = carsInParking ;
+		int content = carsInParking - badSpaces.size() ;
 		StringBuilder strBul = new StringBuilder() ;
 		int x=0 , y=0 , z=0 , badSpotCounter = badSpaces.size() ;
 		while(content > 0)
@@ -116,7 +116,7 @@ public class Parking
 			}
 		}
 		int available = size - carsInParking + badSpotCounter ;
-		while(available < size )
+		while(available > 0 )
 		{
 			Point3D p = new Point3D(x,y,z);
 			if(x < columns && !badSpaces.contains(p))
@@ -128,7 +128,7 @@ public class Parking
 				strBul.append(',');
 				strBul.append(z);
 				strBul.append(") ");
-				--content ;
+				--available ;
 				++x ;
 				continue ;
 			}
@@ -142,7 +142,7 @@ public class Parking
 				strBul.append(z);
 				strBul.append(") ");
 				--badSpotCounter ;
-				--content ;
+				--available ;
 				++x ;
 				continue ;
 			}
@@ -168,8 +168,8 @@ public class Parking
 		if(p.getX() < columns && p.getY() < rows && p.getY() < floors)
 		{
 			badSpaces.addElement(p);
+			++carsInParking;
 		}
-		++carsInParking;
 	}
 	
 	public void removeBadSpace(Point3D p)

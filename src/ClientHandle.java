@@ -9,7 +9,6 @@ import javafx.geometry.Point3D;
 
 import java.sql.Connection;
 
-
 public class ClientHandle implements Runnable {
 
 	ConnectionToClient client ;
@@ -62,8 +61,8 @@ public class ClientHandle implements Runnable {
 			case "APPROVES_PRICES":
 				System.out.println("one");
 				break;
-			case "RESERVATION_UBDATE_SHOT":
-				System.out.println("two");
+			case "PARKING_SNAPSHOT":
+				getParkingSnapshot(msg.toString(), client);
 				break;
 			case "REPORT_NAME":
 				System.out.println("three");
@@ -272,6 +271,22 @@ public class ClientHandle implements Runnable {
 		} catch (NumberFormatException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
+	public void getParkingSnapshot(String msg,ConnectionToClient client)
+	{
+		try {
+			String Substring = msg.substring(msg.indexOf(":")+2, msg.length());
+			if(!ParkingNetwork.containsParking(Substring))
+			{
+				client.sendToClient("FAILED: Invalid Parking ID");
+				return ;
+			}
+			client.sendToClient(ParkingNetwork.getParking(Substring).getSnapshot());
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
