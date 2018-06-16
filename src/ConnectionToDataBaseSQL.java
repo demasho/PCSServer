@@ -44,16 +44,13 @@ public class ConnectionToDataBaseSQL {
 			//			System.out.println(res);
 			//			//res=SignUp("adam", "adamPCS7" ,"adam","azzam","bla@gmail.com","Dancer","123456789","15");
 			//			System.out.println(res);
-		//	UPDATING_PRICES1(" : 10.0 10.0 10.0 10.0");
-		//	Monitoring s= new Monitoring();
-		//	s.StartMonitoringSubscripers();
+			//	UPDATING_PRICES1(" : 10.0 10.0 10.0 10.0");
+			//	Monitoring s= new Monitoring();
+			//	s.StartMonitoringSubscripers();
 		}catch(Exception e) {
 			System.out.println(e.getMessage());
 		}
 	}
-	
-	/*****************************************************************************************/
-	//`CasualParking`, `OneTimeOrders`, `FullMonthlySubscription`, `BusinessMonthlySubscription`, `status`
 	public static String UPDATING_PRICES (double CasualParking,double OneTimeOrder,double FullMonthlySubscription,double BusinessMonthlySubscription){	
 
 		Statement stmt;
@@ -63,7 +60,7 @@ public class ConnectionToDataBaseSQL {
 			String query="INSERT INTO Prices (`CasualParking`,`OneTimeOrders`,`FullMonthlySubscription`,`BusinessMonthlySubscription`,`status`) VALUES " +
 					"("+CasualParking+","+OneTimeOrder+","+FullMonthlySubscription+","+BusinessMonthlySubscription+",'New')";
 			System.out.println(query);
-			 stmt.executeUpdate(query);
+			stmt.executeUpdate(query);
 			result="Updating is Successed";	
 			stmt.close();
 		} catch (SQLException e) {
@@ -75,9 +72,6 @@ public class ConnectionToDataBaseSQL {
 		}
 		return result;
 	}
-	
-	
-	/****************************************************************************************/
 	public static  ResultSet GetAllSubscriper()
 	{
 		Statement stmt; 
@@ -185,6 +179,7 @@ public class ConnectionToDataBaseSQL {
 			ResultSet rs = stmt.getGeneratedKeys();
 			rs.next();
 			orderid = rs.getInt(1);
+			AddToPayment(2,orderid, TimeIn,TimeOut);
 			stmt.close();
 		} catch (SQLException e) {
 			System.out.println(e.getMessage());
@@ -204,6 +199,7 @@ public class ConnectionToDataBaseSQL {
 			ResultSet rs = stmt.getGeneratedKeys();
 			rs.next();
 			orderid = rs.getInt(1);
+			AddToPayment(1,orderid, TimeIn,TimeOut);
 			stmt.close();
 		} catch (SQLException e) {
 			System.out.println(e.getMessage());
@@ -238,13 +234,111 @@ public class ConnectionToDataBaseSQL {
 				String carStatment = "INSERT INTO Cars(`customerID`,`carNumber`) VALUES" + 
 						" "+"('"+CustomerID+"','"+parts[i]+"')";
 				stmt.executeUpdate(carStatment);
-			}			
+			}	
+			if(IsBusniess==true) {
+				AddToPayment(4,SubscriptionID, TimeStart,DeadLine);
+			}else {
+				AddToPayment(3,SubscriptionID, TimeStart,DeadLine);
+			}
 			stmt.close();
 		} catch (Exception e) {
 			System.out.println(e.getMessage());
 			return -1;
 		}		  	
 		return SubscriptionID;
+	}
+	public static String CancelRESERVATION(String OrderID) {
+		String quary=null,result,deletequery=null;
+		Statement stmt;
+		String update = "update Payment set Pay = ? where orderID = ?";
+		DateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.ENGLISH);
+		try {
+			if(OrderID.charAt(0)=='1') {
+				quary="SELECT timeIn FROM CasualParking where orderID = "+ OrderID;
+				deletequery="DELETE FROM CasualParking where orderID = "+ OrderID;
+			}
+			if(OrderID.charAt(0)=='2') {
+				quary="SELECT timeIn FROM OneTimeOrders where orderID = "+ OrderID;
+				deletequery="DELETE FROM OneTimeOrders where orderID = "+ OrderID;
+			}
+			stmt = conn.createStatement();
+			ResultSet rs = stmt.executeQuery(quary);
+			rs.next();
+			Date now =new  Date();
+			Date Start =  format.parse(rs.getString(1));
+			long diff = Start.getTime() - now.getTime();
+			double hours =  (diff / (1000.0*60.0*60.0));
+			System.out.println(now.getHours()+":"+now.getMinutes());
+			System.out.println(hours);
+			double persent;
+			if(hours > 3.0) {
+				persent=0.1;
+			}else {
+				if(hours > 1.0) {
+					persent=0.5;
+				}else {
+					persent=1.0;
+				}
+			}
+			rs = stmt.executeQuery("SELECT Pay FROM Payment where orderID = "+ OrderID);
+			rs.next();
+			PreparedStatement preparedStmt = conn.prepareStatement(update);
+			double pay= rs.getDouble(1)*persent;
+			System.out.println(pay + " "+rs.getDouble(1) );
+			preparedStmt.setDouble(1,pay);
+			preparedStmt.setString (2,OrderID);
+			preparedStmt.executeUpdate();
+			result="Cancel Reservation Sucessed : but you have to Pay : "+( rs.getDouble(1)*persent);
+			stmt.executeUpdate(deletequery);
+
+		} catch (Exception e) {
+			result="Cancel Reservation Failed";
+			e.printStackTrace();
+		}
+		return result;
+	}
+
+	private static void AddToPayment(int type,int OrderID ,String TimeIn ,String TimeOut) {
+		try {
+			ResultSet rs;
+			Statement stmt;
+			stmt = conn.createStatement();
+			DateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.ENGLISH);
+			Date Startdate = format.parse(TimeIn);
+			Date Enddate = format.parse(TimeOut);
+			long diff = Enddate.getTime() - Startdate.getTime();
+			float hours =  (diff / (1000*60*60));
+			Double pay=null;
+			switch(type)
+			{
+			case 1:
+				rs = stmt.executeQuery("SELECT CasualParking FROM Prices where status = "+" 'Now' ");
+				rs.next();
+				pay=rs.getDouble(1) *hours;
+				break;
+			case 2:
+				rs = stmt.executeQuery("SELECT OneTimeOrders FROM Prices where status = "+ " 'Now' ");
+				rs.next();
+				pay=rs.getDouble(1) *hours;
+				break;
+			case 3:
+				rs = stmt.executeQuery("SELECT FullMonthlySubscription FROM Prices where status = "+" 'Now' ");
+				rs.next();
+				pay=rs.getDouble(1);
+				break;
+			case 4:
+				rs = stmt.executeQuery("SELECT BusinessMonthlySubscription FROM Prices where status = "+" 'Now' ");
+				rs.next();
+				pay=rs.getDouble(1);
+				break;
+			}
+			stmt.executeUpdate("INSERT INTO Payment (`orderID`, `Pay`) VALUES "+ "("+ OrderID + "," + pay+")");
+
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
 	}
 
 }

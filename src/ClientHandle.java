@@ -55,13 +55,13 @@ public class ClientHandle implements Runnable {
 				System.out.println("one");
 				break;
 			case "CANCEL_RESERVATION":
-				System.out.println("two");
+				 CancelOrder(msg.toString(),client);
 				break;
 			case "SUBMISSION_COMPLAINT":
 				System.out.println("three");
 				break;
 			case "APPROVES_PRICES":
-				System.out.println("one");
+				 UpdatingPrices( msg.toString(),client);
 				break;
 			case "PARKING_SNAPSHOT":
 				getParkingSnapshot(msg.toString(), client);
@@ -120,21 +120,25 @@ public class ClientHandle implements Runnable {
 			e.printStackTrace();
 		}
 	}
-	/***********************************************************************************/
-	/***********************************************************************************/
+
 	// <NEW_PRICE_FOR_OneTimeOrders> <NEW_PRICE_FOR_CasualParking> <NEW_PRICE_FOR_FullMonthlySubscription> <NEW_PRICE_FOR_BusinessMonthlySubscription>
-	public static void UPDATING_PRICES1(String msg)
+	public static void UpdatingPrices(String msg,ConnectionToClient client)
 	{
-		String Substring = msg.substring(msg.indexOf(":")+2, msg.length());
-		String[] parts=Substring.split(" ");
-		double CasualParking =Double.parseDouble(parts[1]);
-		double OneTimeOrders =Double.parseDouble(parts[0]);
-		double FullMonthlySubscription =Double.parseDouble(parts[2]);
-		double BusinessMonthlySubscription =Double.parseDouble(parts[3]);
-		String answer= ConnectionToDataBaseSQL.UPDATING_PRICES(CasualParking, OneTimeOrders, FullMonthlySubscription, BusinessMonthlySubscription); 
+		try {
+			String Substring = msg.substring(msg.indexOf(":")+2, msg.length());
+			String[] parts=Substring.split(" ");
+			double CasualParking =Double.parseDouble(parts[1]);
+			double OneTimeOrders =Double.parseDouble(parts[0]);
+			double FullMonthlySubscription =Double.parseDouble(parts[2]);
+			double BusinessMonthlySubscription =Double.parseDouble(parts[3]);
+			String answer= ConnectionToDataBaseSQL.UPDATING_PRICES(CasualParking, OneTimeOrders, FullMonthlySubscription, BusinessMonthlySubscription); 
+			client.sendToClient(answer);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
-	/**********************************************************************************/
-	/**********************************************************************************/
+
 	//<FIRST_NAME> <LAST_NAME> <WORKER_ID> <E-MAIL> <ROLE> <ParkingID> <USERNAME> <PASSWORD>
 	public void SignUpWorker(String msg,ConnectionToClient client) {
 		try {
@@ -293,7 +297,17 @@ public class ClientHandle implements Runnable {
 			e.printStackTrace();
 		}
 	}
-
+	public void CancelOrder(String msg,ConnectionToClient client) {
+		try {
+			String Substring = msg.substring(msg.indexOf(":")+2, msg.length());
+			String[] parts = Substring.split(" ");
+			String res=ConnectionToDataBaseSQL.CancelRESERVATION(parts[0]);
+			client.sendToClient(res);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
 	public void getParkingSnapshot(String msg,ConnectionToClient client)
 	{
 		try {
@@ -310,26 +324,5 @@ public class ClientHandle implements Runnable {
 		}
 	}
 
-	public void getFromDB(String msg,ConnectionToClient client) throws SQLException, IOException {
-		String Substring = msg.substring(msg.indexOf(":")+2, msg.length());
-		String[] parts = Substring.split(" ");
-		Statement stmt = conn.createStatement();
-		ResultSet rs = stmt.executeQuery("SELECT Count(UserName) FROM " +
-				"Users where UserName = '"+parts[0]+"'");
-		rs.next();
-		if(rs.getInt(1) == 0) {
-			client.sendToClient("there is no userName you gave!!");
-		}
-		else{
-			ResultSet rs2 = stmt.executeQuery("SELECT Password FROM " +
-					"Users where UserName = '"+parts[0]+"'");
-			rs2.next();
-			if(rs2.getString(1).equals(parts[1])) {
-				client.sendToClient("Welcome !!");
-			}
-			rs2.close();
-		}
-		rs.close();
-		stmt.close();
-	}
-	/***********************************************************************************/
+
+}
