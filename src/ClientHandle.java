@@ -76,6 +76,15 @@ public class ClientHandle implements Runnable
 			case "SAVING_PARKING_SPACE":
 				savingParkingSpace(msg.toString(),client);
 				break;
+			case "GET_UPDATED_PRICES":
+				 GET_UPDATED_PRICES(client);
+				break;
+			case "GET_PAYMENT":
+				GET_PAYMENT(msg.toString(),client);
+				break;
+			case "PAY_ANDOUT":
+				PAY_ANd_GO(msg.toString(),client);
+				break;
 			default:
 				System.out.println("no match");
 			}
@@ -85,6 +94,38 @@ public class ClientHandle implements Runnable
 		}
 	}
 
+	private void PAY_ANd_GO(String string, ConnectionToClient client) {
+		try {
+			String Substring = msg.substring(msg.indexOf(":")+2, msg.length());
+			String[] parts=Substring.split(" ");
+			String ans=ConnectionToDataBaseSQL.PayAndGo(parts[0]);
+				client.sendToClient(ans);
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}		
+		
+	}
+	public void GET_PAYMENT(String msg,ConnectionToClient client) {
+		try {
+			String Substring = msg.substring(msg.indexOf(":")+2, msg.length());
+			String[] parts=Substring.split(" ");
+			String ans=ConnectionToDataBaseSQL.GetPayment(parts[0]);
+				client.sendToClient(ans);
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}		
+	}
+	public void GET_UPDATED_PRICES(ConnectionToClient client) {
+		try {
+		String ans=ConnectionToDataBaseSQL.GetUpdatedPrices();
+			client.sendToClient(ans);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
 	/*********************************************************************************************/
 	//<CUSTOMER_ID> <PARKING_ID>  <ENTRY_DATE> <RELEASE_DATE> <E_MAIL> <CAR_NUMBER> 
 	public void OneTimeOrders(String msg,ConnectionToClient client)

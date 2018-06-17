@@ -21,6 +21,7 @@ public class ConnectionToDataBaseSQL
 		conn = DriverManager.getConnection(url, username, password);
 		System.out.println("SQL connection succeed");
 	}
+
 	public static void main(String[] args) 
 	{
 		try {
@@ -43,16 +44,17 @@ public class ConnectionToDataBaseSQL
 			//			//res=SignUp("adam", "adamPCS7" ,"adam","azzam","bla@gmail.com","Dancer","123456789","15");
 			//			System.out.println(res);
 			//	UPDATING_PRICES1(" : 10.0 10.0 10.0 10.0");
-//			DateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.ENGLISH);
-//			ParkingNetwork p=new ParkingNetwork();
-//			ParkingNetwork.AddParkingLot("333", 2);
-//			Date Start =  format.parse("2018-06-17 14:00:00");
-//			Parking  so=ParkingNetwork.getParking("333");
-//			System.out.println(so.getSize());
-//			so.enterToParking(Start, "2000001", "1716719");
-//			Monitoring s= new Monitoring();
-//			s.StartMonitoringEndTimeForOrders();
-			String s=APPROVES_PRICES();
+			//			DateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.ENGLISH);
+			//			ParkingNetwork p=new ParkingNetwork();
+			//			ParkingNetwork.AddParkingLot("333", 2);
+			//			Date Start =  format.parse("2018-06-17 14:00:00");
+			//			Parking  so=ParkingNetwork.getParking("333");
+			//			System.out.println(so.getSize());
+			//			so.enterToParking(Start, "2000001", "1716719");
+			//			Monitoring s= new Monitoring();
+			//			s.StartMonitoringEndTimeForOrders();
+			String s= PayAndGo("2000001");
+			System.out.println(s);
 		}catch(Exception e) {
 			System.out.println(e.getMessage());
 		}
@@ -101,11 +103,43 @@ public class ConnectionToDataBaseSQL
 		}
 		return "APPROVED SUCCESSED";
 	}
+	public static String GetUpdatedPrices()
+	{
+		Statement stmt;
+		String result;
+		try
+		{
+			stmt = conn.createStatement();
+			ResultSet res= stmt.executeQuery( "SELECT  `CasualParking`, `OneTimeOrders`, `FullMonthlySubscription`, `BusinessMonthlySubscription` FROM Prices where status = "+ " 'New' ");
+			res.next();
+			result="New Prices : CasualParking -> "+ res.getDouble(1)+"$ OneTimeOrders -> "+ res.getDouble(2)+"$ FullMonthlySubscription -> "+ res.getDouble(3)+"$ BusinessMonthlySubscription -> "+ res.getDouble(4)+"$";
+		} 
+		catch (SQLException e)
+		{
+			e.printStackTrace();
+			result="There is no updates in prices";
+		}
+		return result;
+	}
+
+	public static String GetPayment(String orderID) {
+		Statement stmt;
+		String result;
+		try {
+			stmt = conn.createStatement();
+			ResultSet rs = stmt.executeQuery("SELECT Pay FROM Payment where orderID = "+ orderID);
+			rs.next();
+			result="Payment = "+rs.getDouble(1);
+		} catch (SQLException e) {
+			e.printStackTrace();
+			result ="failed to get your payment try later";
+		}
+		return result;
+	}
 	/**************************************************************************************/
 	public static String SUBMISSION_COMPLAINT(int ComplaintID,int OrderID,String DESCRIBTION,String Time) 
 	{
 		Statement stmt;
-
 		java.text.SimpleDateFormat ft = 
 				new java.text.SimpleDateFormat ("yyyy-MM-dd HH:mm:ss");
 		DateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.ENGLISH);
@@ -162,6 +196,7 @@ public class ConnectionToDataBaseSQL
 		}
 		return rs;
 	}
+	
 	public static  ResultSet GetAllOneTimeOrders()
 	{
 		Statement stmt; 
@@ -175,6 +210,7 @@ public class ConnectionToDataBaseSQL
 		}
 		return rs;
 	}
+	
 	public static  ResultSet GetAllOrders()
 	{
 		Statement stmt; 
@@ -187,6 +223,7 @@ public class ConnectionToDataBaseSQL
 		}
 		return rs;
 	}
+	
 	public static  void  putisLateToParkFlag(int orderID)
 	{
 		try {
@@ -199,6 +236,7 @@ public class ConnectionToDataBaseSQL
 			e.printStackTrace();
 		}
 	}
+	
 	public static  void  PutFine(int orderID,double fine)
 	{
 		Statement stmt;
@@ -470,6 +508,22 @@ public class ConnectionToDataBaseSQL
 			e.printStackTrace();
 		}
 
+	}
+
+	public static String PayAndGo(String orderID) {
+		Statement stmt;
+		String deletequery,result;
+		try {
+			stmt = conn.createStatement();
+			stmt.executeUpdate("DELETE FROM OneTimeOrders  where orderID = "+ orderID);
+			stmt.executeUpdate("DELETE FROM CasualParking  where orderID = "+ orderID);
+			stmt.executeUpdate("DELETE FROM Payment where orderID = "+orderID);
+			result="Payment Succeded  Have A nice Day :)";
+		} catch (SQLException e) {
+			e.printStackTrace();
+			result="Payment Failed Try Again Later ";
+		}
+		return result;
 	}
 
 }
