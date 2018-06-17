@@ -8,7 +8,7 @@ public class ParkingSpace implements Comparator<ParkingSpace>
 	private String carID ;
 	private String orderID ;
 	private boolean available ;
-	
+
 	public ParkingSpace(){}
 	public ParkingSpace(Date deadline , String orderid , String carID)
 	{
@@ -18,9 +18,9 @@ public class ParkingSpace implements Comparator<ParkingSpace>
 		available = false ;
 	}
 
-	
-	
-	
+
+
+
 	public String getCarID() {
 		return carID;
 	}
@@ -59,8 +59,17 @@ public class ParkingSpace implements Comparator<ParkingSpace>
 			return -1 ;
 		return 0;
 	}
-	
-	
-	
+
+	@Override
+	public boolean equals( Object of) 
+	{
+		ParkingSpace o =(ParkingSpace)of;
+		if(this.carID.equals(o.carID) && this.orderID.equals(o.orderID))
+			return true;
+		return false;
+	}
+
+
+
 
 }

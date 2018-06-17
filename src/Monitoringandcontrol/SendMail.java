@@ -37,9 +37,9 @@ public class SendMail {
 
 	}
 
-	public static void sendLateAlertMessage(String username ,String StartDate,String ParkingID,String email){	
+	public static void sendLateAlertMessage(String orderID ,String StartDate,String ParkingID,String email){	
 		String subject = "Late for parking";
-		String msg = "Hello " + username  + ",\n"
+		String msg = "Hello " + orderID  + ",\n"
 				+ "According to the information we have, You have reserved a parking on " + ParkingID + " Parking Lot "
 				+ "at " + StartDate + " today.\n"
 				+ "You got this email as a reminder for being late.\nYou are asked to head to the lot within 30 minutes before the reservation being canceled.\nThank you,\nCPS team.";
@@ -62,22 +62,15 @@ public class SendMail {
 		SendMail.send(email, subject, msg);
 		return;
 	}
-}
 
 
-//	public static void sendExcessionEmail(JSONObject subscription) {
-//		try {
-//		String subject = "Parking Excession Alert";
-//		String msg = "Hello " + subscription.getString("username")  + ",\n"
-//				+ "According to the information we have, You have exceeded your parking limit.\n"
-//						+ "Your Last entry was at " + subscription.getString("lastEntry") +", which is before 14 days (Or more).\n"
-//								+ "You are asked to come and collect your car as fast as possible.\nThank you,\nCPS team.";
-//		
-//			SendMail.send(subscription.getString("email"), subject, msg);
-//		} catch (JSONException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		}
-//		
-//	}
 
+	public static void sendExcessionEmail(String orderID ,String enddate,String ParkingID,String email){	
+		String subject = "Parking Excession Alert";
+		String msg = "Hello " + orderID  + ",\n"
+				+ "According to the information we have, You have exceeded your parking limit time : "+ enddate + " at Parking : "+ ParkingID
+								+ ",\n You are asked to come and collect your car as fast as possible.\nThank you,\nCPS team.";
+		SendMail.send(email, subject, msg);	
+		System.out.println("Done Send");
+	}
+	}

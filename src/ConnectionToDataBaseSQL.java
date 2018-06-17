@@ -45,8 +45,16 @@ public class ConnectionToDataBaseSQL {
 			//			//res=SignUp("adam", "adamPCS7" ,"adam","azzam","bla@gmail.com","Dancer","123456789","15");
 			//			System.out.println(res);
 			//	UPDATING_PRICES1(" : 10.0 10.0 10.0 10.0");
-			//	Monitoring s= new Monitoring();
-			//	s.StartMonitoringSubscripers();
+			DateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.ENGLISH);
+			ParkingNetwork p=new ParkingNetwork();
+			ParkingNetwork.AddParkingLot("333", 2);
+			Date Start =  format.parse("2018-06-17 14:00:00");
+			Parking  so=ParkingNetwork.getParking("333");
+			System.out.println(so.getSize());
+			so.enterToParking(Start, "2000001", "1716719");
+				Monitoring s= new Monitoring();
+				s.StartMonitoringEndTimeForOrders();
+				
 		}catch(Exception e) {
 			System.out.println(e.getMessage());
 		}
@@ -85,6 +93,61 @@ public class ConnectionToDataBaseSQL {
 			e.printStackTrace();
 		}
 		return rs;
+	}
+	public static  ResultSet GetAllOneTimeOrders()
+	{
+		Statement stmt; 
+		ResultSet rs =null;
+		try {
+			stmt = conn.createStatement();
+			rs = stmt.executeQuery("SELECT orderID,timeIn, parkingID , email ,carNumber, isLateToPark FROM " +
+					"OneTimeOrders");
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return rs;
+	}
+	public static  ResultSet GetAllOrders()
+	{
+		Statement stmt; 
+		ResultSet rs =null;
+		try {
+			stmt = conn.createStatement();
+			rs = stmt.executeQuery("SELECT orderID,timeOut,parkingID , email ,carNumber FROM OneTimeOrders UNION SELECT orderID,timeOut,parkingID , email ,carNumber FROM CasualParking");
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return rs;
+	}
+	public static  void  putisLateToParkFlag(int orderID)
+	{
+		try {
+			String query = "update OneTimeOrders set isLateToPark = ? where orderID = ?";
+			PreparedStatement preparedStmt = conn.prepareStatement(query);
+			preparedStmt.setBoolean (1,true);
+			preparedStmt.setInt(2,orderID);
+			preparedStmt.executeUpdate();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}
+	public static  void  PutFine(int orderID,double fine)
+	{
+		Statement stmt;
+		try {
+			stmt = conn.createStatement();
+			String quary="SELECT Pay FROM Payment where orderID = "+ orderID;
+			String update = "update Payment set Pay = ? where orderID = ?";
+			ResultSet rs = stmt.executeQuery(quary);
+			rs.next();
+			double pay=rs.getDouble(1);
+			PreparedStatement preparedStmt = conn.prepareStatement(update);
+			preparedStmt.setDouble(1,pay*fine);
+			preparedStmt.setInt(2,orderID);
+			preparedStmt.executeUpdate();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
 	}
 	public static String Login(String username,String password) { 
 		Statement stmt;

@@ -7,5 +7,9 @@
 		</attributes>
 	</classpathentry>
 	<classpathentry exported="true" kind="lib" path="src/Ref/mysql-connector-java-3.1.11-bin.jar"/>
+	<classpathentry exported="true" kind="lib" path="src/Ref/activation.jar"/>
+	<classpathentry exported="true" kind="lib" path="src/Ref/org.json.jar"/>
+	<classpathentry exported="true" kind="lib" path="src/Ref/mail.jar"/>
+	<classpathentry exported="true" kind="lib" path="src/Ref/jfxrt.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

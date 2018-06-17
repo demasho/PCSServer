@@ -14,8 +14,8 @@ public class Parking
 	private int carsInParking ;
 	private String parkingID ;
 	private PriorityQueue<ParkingSpace> theParking ;
-	private Vector<Point3D> badSpaces = new Vector<Point3D>() ;
-	private Vector<String> savedSpaces = new Vector<String>();
+	private Vector<Point3D> badSpaces ;
+	private Vector<String> savedSpaces;
 	public Parking(String id ,int columns)
 	{
 		carsInParking=0 ;
@@ -24,6 +24,8 @@ public class Parking
 		this.columns = columns ;
 		size = columns*rows*floors ;
 		theParking = new PriorityQueue<ParkingSpace>(size,comparator);
+		badSpaces= new Vector<Point3D>() ;
+		 savedSpaces = new Vector<String>();
 	}
 	
 	public boolean enterToParking(Date deadline , String orderid , String carID)
@@ -241,6 +243,12 @@ public class Parking
 			return true ;
 		}
 		return false ;
+	}
+	
+	public boolean isInsideParking(String carID , String orderID)
+	{ 
+		boolean res = theParking.contains(new ParkingSpace(new Date(),orderID,carID));
+		return res;
 	}
 	
 	//getters and setters 	

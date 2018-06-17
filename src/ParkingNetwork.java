@@ -2,9 +2,11 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 
-public class ParkingNetwork {
-	private static Map<String,Parking> parknet= new HashMap<String,Parking>();
-	
+public  class ParkingNetwork {
+	private static Map<String,Parking> parknet;
+	 public ParkingNetwork() {
+		 parknet= new HashMap<String,Parking>();
+	 }
 	public static boolean AddParkingLot(String ParkingId,int columns)
 	{
 		if(parknet.containsKey(ParkingId)==true)
