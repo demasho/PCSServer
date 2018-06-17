@@ -47,7 +47,7 @@ public class ClientHandle implements Runnable
 				LogOutWorker(msg.toString(),client);
 				break;
 			case "UPDATING_PRICES":
-				System.out.println("three");
+				UpdatingPrices( msg.toString(),client);
 				break;
 			case "TRACKING_THE_STATUS_OF_REQUEST":
 				System.out.println("one");
@@ -56,10 +56,10 @@ public class ClientHandle implements Runnable
 				CancelOrder(msg.toString(),client);
 				break;
 			case "SUBMISSION_COMPLAINT":
-				System.out.println("three");
+				SUBMISSION_COMPLAINT(msg.toString(),client);
 				break;
 			case "APPROVES_PRICES":
-				UpdatingPrices( msg.toString(),client);
+				APPROVES_PRICES(client);
 				break;
 			case "PARKING_SNAPSHOT":
 				getParkingSnapshot(msg.toString(), client);
@@ -170,12 +170,10 @@ public class ClientHandle implements Runnable
 		}
 	}
 	/**************************************************************************************/
-	public static void APPROVES_PRICES(String msg,ConnectionToClient client)
+	public static void APPROVES_PRICES(ConnectionToClient client)
 	{
 		try 
 		{
-			String Substring = msg.substring(msg.indexOf(":")+2, msg.length());
-			String[] parts = Substring.split(" ");
 			String res=ConnectionToDataBaseSQL.APPROVES_PRICES();
 			client.sendToClient(res);
 		}

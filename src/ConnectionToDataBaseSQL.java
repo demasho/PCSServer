@@ -43,16 +43,16 @@ public class ConnectionToDataBaseSQL
 			//			//res=SignUp("adam", "adamPCS7" ,"adam","azzam","bla@gmail.com","Dancer","123456789","15");
 			//			System.out.println(res);
 			//	UPDATING_PRICES1(" : 10.0 10.0 10.0 10.0");
-			DateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.ENGLISH);
-			ParkingNetwork p=new ParkingNetwork();
-			ParkingNetwork.AddParkingLot("333", 2);
-			Date Start =  format.parse("2018-06-17 14:00:00");
-			Parking  so=ParkingNetwork.getParking("333");
-			System.out.println(so.getSize());
-			so.enterToParking(Start, "2000001", "1716719");
-			Monitoring s= new Monitoring();
-			s.StartMonitoringEndTimeForOrders();
-
+//			DateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.ENGLISH);
+//			ParkingNetwork p=new ParkingNetwork();
+//			ParkingNetwork.AddParkingLot("333", 2);
+//			Date Start =  format.parse("2018-06-17 14:00:00");
+//			Parking  so=ParkingNetwork.getParking("333");
+//			System.out.println(so.getSize());
+//			so.enterToParking(Start, "2000001", "1716719");
+//			Monitoring s= new Monitoring();
+//			s.StartMonitoringEndTimeForOrders();
+			String s=APPROVES_PRICES();
 		}catch(Exception e) {
 			System.out.println(e.getMessage());
 		}
@@ -86,11 +86,12 @@ public class ConnectionToDataBaseSQL
 		{
 			stmt = conn.createStatement();
 			String deletequery;
-			deletequery="DELETE FROM Prices where status = "+ "Now";
+			deletequery="DELETE FROM Prices where status = "+ " 'Now' ";
 			String update = "update Prices set status = ? where status = 'New'";
-			stmt.close();
 			stmt.executeUpdate(deletequery);
-			stmt.executeUpdate(update);
+			PreparedStatement preparedStmt = conn.prepareStatement(update);
+			preparedStmt.setString (1,"Now");
+			preparedStmt.executeUpdate();
 		} 
 		catch (SQLException e)
 		{
