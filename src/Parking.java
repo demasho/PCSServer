@@ -4,7 +4,6 @@ import java.util.PriorityQueue;
 import java.util.Stack;
 import java.util.Vector;
 import javafx.geometry.Point3D;
-
 public class Parking 
 {
 	private final int rows = 3 ;
@@ -16,6 +15,7 @@ public class Parking
 	private PriorityQueue<ParkingSpace> theParking ;
 	private Vector<Point3D> badSpaces ;
 	private Vector<String> savedSpaces;
+	/*********************************************************************************************/
 	public Parking(String id ,int columns)
 	{
 		carsInParking=0 ;
@@ -25,9 +25,9 @@ public class Parking
 		size = columns*rows*floors ;
 		theParking = new PriorityQueue<ParkingSpace>(size,comparator);
 		badSpaces= new Vector<Point3D>() ;
-		 savedSpaces = new Vector<String>();
+		savedSpaces = new Vector<String>();
 	}
-	
+	/*********************************************************************************************/
 	public boolean enterToParking(Date deadline , String orderid , String carID)
 	{
 		ParkingSpace space = new ParkingSpace(deadline,orderid,carID);
@@ -46,7 +46,7 @@ public class Parking
 		}
 		return false ;
 	}
-	
+	/*********************************************************************************************/
 	public boolean releaseFromParking(String carId)
 	{
 		Stack<ParkingSpace> stack = new Stack<ParkingSpace>();
@@ -68,7 +68,7 @@ public class Parking
 		}
 		return found ;
 	}
-	
+	/*********************************************************************************************/
 	public String getSnapshot()
 	{
 		int content = carsInParking - badSpaces.size() ;
@@ -160,11 +160,10 @@ public class Parking
 				y=0 ;
 				x=0 ;
 			}
-		}
-		
+		}	
 		return strBul.toString() ;
 	}
-	
+	/*********************************************************************************************/
 	public void addBadSpace(Point3D p)
 	{
 		if(p.getX() < columns && p.getY() < rows && p.getY() < floors)
@@ -173,7 +172,7 @@ public class Parking
 			++carsInParking;
 		}
 	}
-	
+	/*********************************************************************************************/
 	public void removeBadSpace(Point3D p)
 	{
 		if(badSpaces.contains(p))
@@ -182,7 +181,7 @@ public class Parking
 		}
 		--carsInParking;
 	}
-	
+	/*********************************************************************************************/
 	//return true if the parking is not full and succeeded saving a parkSpace   
 	public boolean addSavedSpace(String orderId)
 	{
@@ -193,7 +192,7 @@ public class Parking
 		}
 		return false ;
 	}
-	
+	/*********************************************************************************************/
 	//use this before entering the parking for booked spot , returns true if succeed
 	public boolean removeSavedSpace(String orderId)
 	{
@@ -204,17 +203,17 @@ public class Parking
 		}
 		return false ;
 	}
-	
+	/*********************************************************************************************/
 	public boolean isThereSavedSpaces()
 	{
 		return savedSpaces.size()>0 ;
 	}
-	
+	/*********************************************************************************************/
 	public boolean isFull()
 	{
 		return carsInParking == size ;
 	}
-	
+	/*********************************************************************************************/
 	public String getBadSpaces()
 	{
 		StringBuilder str = new StringBuilder() ;
@@ -234,7 +233,7 @@ public class Parking
 		}
 		return "" ;
 	}
-	
+	/*********************************************************************************************/
 	public boolean fixBadSpace(Point3D p)
 	{
 		if(badSpaces.contains(p))
@@ -244,43 +243,62 @@ public class Parking
 		}
 		return false ;
 	}
-	
+	/*********************************************************************************************/
 	public boolean isInsideParking(String carID , String orderID)
 	{ 
 		boolean res = theParking.contains(new ParkingSpace(new Date(),orderID,carID));
 		return res;
 	}
-	
+	/*********************************************************************************************/
 	//getters and setters 	
-	public int getColumns() {
+	public int getColumns()
+	{
 		return columns;
 	}
-	public void setColumns(int columns) {
+	/*********************************************************************************************/
+	public void setColumns(int columns) 
+	{
 		this.columns = columns;
 	}
-	public String getParkingID() {
+	/*********************************************************************************************/
+	public String getParkingID() 
+	{
 		return parkingID;
 	}
-	public int getSize() {
+	/*********************************************************************************************/
+	public int getSize()
+	{
 		return size;
 	}
-
-	public void setSize(int size) {
+	/*********************************************************************************************/
+	public void setSize(int size) 
+	{
 		this.size = size;
 	}
-	public void setParkingID(String parkingID) {
+	/*********************************************************************************************/
+	public void setParkingID(String parkingID)
+	{
 		this.parkingID = parkingID;
 	}
-	public PriorityQueue<ParkingSpace> getTheParking() {
+	/*********************************************************************************************/
+	public PriorityQueue<ParkingSpace> getTheParking()
+	{
 		return theParking;
 	}
-	public void setTheParking(PriorityQueue<ParkingSpace> theParking) {
+	/*********************************************************************************************/
+	public void setTheParking(PriorityQueue<ParkingSpace> theParking) 
+	{
 		this.theParking = theParking;
 	}
-	public int getRows() {
+	/*********************************************************************************************/
+	public int getRows()
+	{
 		return rows;
 	}
-	public int getFloor() {
+	/*********************************************************************************************/
+	public int getFloor() 
+	{
 		return floors;
 	}
+	/*********************************************************************************************/
 }

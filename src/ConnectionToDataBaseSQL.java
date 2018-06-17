@@ -10,10 +10,8 @@ import java.sql.ResultSet;
 import java.sql.Statement ;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-
-public class ConnectionToDataBaseSQL {
-
-
+public class ConnectionToDataBaseSQL
+{
 	protected  static Connection conn;
 	public static void conncetToDataBase() throws SQLException, InstantiationException, IllegalAccessException, ClassNotFoundException {
 		Class.forName("com.mysql.jdbc.Driver").newInstance();
@@ -52,9 +50,9 @@ public class ConnectionToDataBaseSQL {
 			Parking  so=ParkingNetwork.getParking("333");
 			System.out.println(so.getSize());
 			so.enterToParking(Start, "2000001", "1716719");
-				Monitoring s= new Monitoring();
-				s.StartMonitoringEndTimeForOrders();
-				
+			Monitoring s= new Monitoring();
+			s.StartMonitoringEndTimeForOrders();
+
 		}catch(Exception e) {
 			System.out.println(e.getMessage());
 		}
@@ -106,11 +104,11 @@ public class ConnectionToDataBaseSQL {
 	public static String SUBMISSION_COMPLAINT(int ComplaintID,int OrderID,String DESCRIBTION,String Time) 
 	{
 		Statement stmt;
-	
-		 java.text.SimpleDateFormat ft = 
-			      new java.text.SimpleDateFormat ("yyyy-MM-dd HH:mm:ss");
-		 DateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.ENGLISH);
-			//Date date = null;
+
+		java.text.SimpleDateFormat ft = 
+				new java.text.SimpleDateFormat ("yyyy-MM-dd HH:mm:ss");
+		DateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.ENGLISH);
+		//Date date = null;
 		/*	try 
 			{
 				date = format.parse(Time);

@@ -4,28 +4,26 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Date;
-
 import com.mysql.jdbc.Util;
-
 import javafx.geometry.Point3D;
-
 import java.sql.Connection;
-
-public class ClientHandle implements Runnable {
-
+public class ClientHandle implements Runnable
+{
 	ConnectionToClient client ;
 	String msg ;
 	public  Connection conn;
+	/*********************************************************************************************/
 	public ClientHandle(Object msg, ConnectionToClient client,Connection conn)
 	{
 		this.msg = msg.toString();
 		this.client = client ;
 		this.conn=conn;
 	}
-
+	/*********************************************************************************************/
 	public void run()
 	{
-		try {
+		try
+		{
 			System.out.println("Message received: " + msg + " from " + client);
 			String Action =msg.toString().substring(0, msg.toString().indexOf(":"));
 			switch(Action)
@@ -55,13 +53,13 @@ public class ClientHandle implements Runnable {
 				System.out.println("one");
 				break;
 			case "CANCEL_RESERVATION":
-				 CancelOrder(msg.toString(),client);
+				CancelOrder(msg.toString(),client);
 				break;
 			case "SUBMISSION_COMPLAINT":
 				System.out.println("three");
 				break;
 			case "APPROVES_PRICES":
-				 UpdatingPrices( msg.toString(),client);
+				UpdatingPrices( msg.toString(),client);
 				break;
 			case "PARKING_SNAPSHOT":
 				getParkingSnapshot(msg.toString(), client);
@@ -82,13 +80,17 @@ public class ClientHandle implements Runnable {
 				System.out.println("no match");
 			}
 		}
-		catch(Exception e ) {}
-
+		catch(Exception e )
+		{
+		}
 	}
 
+	/*********************************************************************************************/
 	//<CUSTOMER_ID> <PARKING_ID>  <ENTRY_DATE> <RELEASE_DATE> <E_MAIL> <CAR_NUMBER> 
-	public void OneTimeOrders(String msg,ConnectionToClient client) {
-		try {
+	public void OneTimeOrders(String msg,ConnectionToClient client)
+	{
+		try
+		{
 			String Substring = msg.substring(msg.indexOf(":")+2, msg.length());
 			String[] parts = Substring.split(" ");
 			String startdate=parts[2].replace("/", " ");
@@ -96,35 +98,44 @@ public class ClientHandle implements Runnable {
 			if(ParkingNetwork.IsParkFULL(parts[1])== true)
 			{
 				client.sendToClient("Order Failed The ParkingLot that you ordered is full !!");
-			}else {
+			}
+			else
+			{
 				int answer= ConnectionToDataBaseSQL.AddOneTimeOrder(parts[0], parts[1], startdate , enddate , parts[4], parts[5]); 
 				String status = answer==-1 ?  " Failed Try Again Later" :  " Sucessed , your Odred id = "+ answer ;
 				client.sendToClient("Your Order is"+ status);
 			}
-
-		} catch (IOException e) {
+		}
+		catch (IOException e)
+		{
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	} 
+	/*********************************************************************************************/
 	//<USERNAME> <PASSWORD>
-	public void LoginWorker(String msg,ConnectionToClient client) {
-		try {
+	public void LoginWorker(String msg,ConnectionToClient client) 
+	{
+		try
+		{
 			String Substring = msg.substring(msg.indexOf(":")+2, msg.length());
 			String[] parts = Substring.split(" ");
 			String answer= ConnectionToDataBaseSQL.Login(parts[0], parts[1]); 
 			client.sendToClient(answer);
 
-		} catch (IOException e) {
+		} 
+		catch (IOException e) 
+		{
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
-
+	/*********************************************************************************************/
 	// <NEW_PRICE_FOR_OneTimeOrders> <NEW_PRICE_FOR_CasualParking> <NEW_PRICE_FOR_FullMonthlySubscription> <NEW_PRICE_FOR_BusinessMonthlySubscription>
 	public static void UpdatingPrices(String msg,ConnectionToClient client)
 	{
-		try {
+		try 
+		{
 			String Substring = msg.substring(msg.indexOf(":")+2, msg.length());
 			String[] parts=Substring.split(" ");
 			double CasualParking =Double.parseDouble(parts[1]);
@@ -133,7 +144,9 @@ public class ClientHandle implements Runnable {
 			double BusinessMonthlySubscription =Double.parseDouble(parts[3]);
 			String answer= ConnectionToDataBaseSQL.UPDATING_PRICES(CasualParking, OneTimeOrders, FullMonthlySubscription, BusinessMonthlySubscription); 
 			client.sendToClient(answer);
-		} catch (IOException e) {
+		} 
+		catch (IOException e)
+		{
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
@@ -175,26 +188,34 @@ public class ClientHandle implements Runnable {
 	}
 	/***************************************************************************************/
 	//<FIRST_NAME> <LAST_NAME> <WORKER_ID> <E-MAIL> <ROLE> <ParkingID> <USERNAME> <PASSWORD>
-	public void SignUpWorker(String msg,ConnectionToClient client) {
-		try {
+	public void SignUpWorker(String msg,ConnectionToClient client) 
+	{
+		try
+		{
 			String Substring = msg.substring(msg.indexOf(":")+2, msg.length());
 			String[] parts = Substring.split(" ");
 			String answer= ConnectionToDataBaseSQL.SignUp(parts[6], parts[7], parts[0], parts[1], parts[3], parts[4], parts[2],parts[5]); 
 			client.sendToClient(answer);
 
-		} catch (IOException e) {
+		} 
+		catch (IOException e) 
+		{
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
-	public void LogOutWorker(String msg,ConnectionToClient client) {
+	/*********************************************************************************************/
+	public void LogOutWorker(String msg,ConnectionToClient client)
+	{
 		String Substring = msg.substring(msg.indexOf(":")+2, msg.length());
 		String[] parts = Substring.split(" ");
 		ConnectionToDataBaseSQL.LogOut(parts[0]); 
 	}
+	/*********************************************************************************************/
 	//<PARKING_ID> <ENTRY_DATE> <RELEASE_DATE> <E-MAIL> <CUSTOMER_ID> <CAR_NUMBER>
 	public void CasualParkingOrder(String msg,ConnectionToClient client) {
-		try {
+		try 
+		{
 			String Substring = msg.substring(msg.indexOf(":")+2, msg.length());
 			String[] parts = Substring.split(" ");
 			String startdate=parts[1].replace("/", " ");
@@ -207,21 +228,26 @@ public class ClientHandle implements Runnable {
 				else 
 					client.sendToClient("Order Failed The ParkingLot that you ordered is full ,"
 							+ "Alternative parkings : "+availables);
-			}else {
+			}
+			else 
+			{
 				int answer= ConnectionToDataBaseSQL.AddCasualParking(parts[0], startdate, enddate, parts[3], parts[4], parts[5]); 
 				String status = answer==-1 ?  " Failed Try Again Later" :  " Sucessed , your Odred id = "+ answer ;
 				client.sendToClient("Your Order is"+ status);
 			}
-
-		} catch (IOException e) {
+		} 
+		catch (IOException e) 
+		{
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	} 
-
+	/*********************************************************************************************/
 	//<CUSTOMER_ID> <STARTED_DATE> <E_MAIL> <IS_BUSINESS> <AMOUNT_OF_CARS> , <CAR_NUMBER>...<CAR_NUMBER>
-	public void MonthlySubscription(String msg,ConnectionToClient client) {
-		try {
+	public void MonthlySubscription(String msg,ConnectionToClient client) 
+	{
+		try
+		{
 			String Substring = msg.substring(msg.indexOf(":")+2, msg.length());
 			int indexofcomm = msg.indexOf(",")+2;
 			String AllCars= msg.substring(indexofcomm, msg.length());
@@ -232,78 +258,84 @@ public class ClientHandle implements Runnable {
 			int answer= ConnectionToDataBaseSQL.AddMonthlySubscription(parts[0],startdate, parts[2],IsB,amountofcars,AllCars); 
 			String status = answer==-1 ?  " Failed Try Again Later" :  " Sucessed , your Odred id = "+ answer ;
 			client.sendToClient("Your Subscription ID is"+ status);			
-		} catch (IOException e) {
+		} 
+		catch (IOException e) 
+		{
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	} 
-
+	/*********************************************************************************************/
 	//<PARKING_ID> <SPACE_LOCATION>
 	public void disabledParkingSpace(String msg,ConnectionToClient client)
 	{
-		try {
+		try 
+		{
 			String Substring = msg.substring(msg.indexOf(":")+2, msg.length());
 			String[] parts = Substring.split(" ");
 			Parking parking =null ;
 			if(ParkingNetwork.containsParking(parts[0]))
 				parking = ParkingNetwork.getParking(parts[0]);
-			else{
+			else
+			{
 				client.sendToClient(parts[0] + " is not exist");
 				return ;
 			}
-
 			String point = parts[1].substring(parts[1].indexOf("(")+1, parts[1].length()-1);
 			String[] pointParts = point.split(",");
 			int x = Integer.parseInt(pointParts[0]);
 			int y = Integer.parseInt(pointParts[1]);
 			int z = Integer.parseInt(pointParts[2]);
 			Point3D location = null ;
-			if(x < parking.getColumns() && y < parking.getRows()
-					&& z < parking.getFloor())
+			if(x < parking.getColumns() && y < parking.getRows() && z < parking.getFloor())
 				location = new Point3D(x, y, z);
-			else {
+			else 
+			{
 				client.sendToClient("Incorrect spot: "+parts[1]);
 				return ;
 			}
 			parking.addBadSpace(location);
-			client.sendToClient(parts[1] + " in " + parts[0]
-					+" updated to be {disabled space} succefully");
+			client.sendToClient(parts[1] + " in " + parts[0]+" updated to be {disabled space} succefully");
 		}
-		catch (IOException e) {
+		catch (IOException e) 
+		{
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
-
+	/*********************************************************************************************/
 	//<PARKING_ID> <ORDER_ID>
 	public void savingParkingSpace(String msg,ConnectionToClient client)
 	{
-		try {
+		try 
+		{
 			String Substring = msg.substring(msg.indexOf(":")+2, msg.length());
 			String[] parts = Substring.split(" ");
 			Parking parking =null ;
 			if(ParkingNetwork.containsParking(parts[0]))
 				parking = ParkingNetwork.getParking(parts[0]);
-			else{
+			else
+			{
 				client.sendToClient(parts[0] + " is not exist");
 				return ;
 			}
 			boolean res = parking.addSavedSpace(parts[1]);
 			if(res == true)
-				client.sendToClient("Saving parking space for order number "
-						+parts[1]+": SUCCEEDED");
-			else client.sendToClient("Saving parking space for order number "
-					+parts[1]+": FAILED");
-		} catch (IOException e) {
+				client.sendToClient("Saving parking space for order number "+parts[1]+": SUCCEEDED");
+			else client.sendToClient("Saving parking space for order number "+parts[1]+": FAILED");
+		} 
+		catch (IOException e)
+		{
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
-
+	/*********************************************************************************************/
 	//<PARKING_ID> <COLUMNS>
 	public void addNewParking(String msg,ConnectionToClient client)
 	{
-		try {
+		try 
+		{
 			String Substring = msg.substring(msg.indexOf(":")+2, msg.length());
 			String[] parts = Substring.split(" ");
 			int columns = Integer.parseInt(parts[1]);
@@ -324,28 +356,39 @@ public class ClientHandle implements Runnable {
 				return ;
 			}
 			else client.sendToClient("FAILED: Try Again Later");
-		} catch (NumberFormatException e) {
+		} 
+		catch (NumberFormatException e)
+		{
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		} catch (IOException e) {
+		} 
+		catch (IOException e) 
+		{
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
-	public void CancelOrder(String msg,ConnectionToClient client) {
-		try {
+	/*********************************************************************************************/
+	public void CancelOrder(String msg,ConnectionToClient client)
+	{
+		try 
+		{
 			String Substring = msg.substring(msg.indexOf(":")+2, msg.length());
 			String[] parts = Substring.split(" ");
 			String res=ConnectionToDataBaseSQL.CancelRESERVATION(parts[0]);
 			client.sendToClient(res);
-		} catch (IOException e) {
+		} 
+		catch (IOException e)
+		{
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
+	/*********************************************************************************************/
 	public void getParkingSnapshot(String msg,ConnectionToClient client)
 	{
-		try {
+		try 
+		{
 			String Substring = msg.substring(msg.indexOf(":")+2, msg.length());
 			if(!ParkingNetwork.containsParking(Substring))
 			{
@@ -353,11 +396,12 @@ public class ClientHandle implements Runnable {
 				return ;
 			}
 			client.sendToClient(ParkingNetwork.getParking(Substring).getSnapshot());
-		} catch (IOException e) {
+		} 
+		catch (IOException e) 
+		{
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
-
-
+	/*********************************************************************************************/
 }
