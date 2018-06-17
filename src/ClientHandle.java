@@ -138,7 +138,42 @@ public class ClientHandle implements Runnable {
 			e.printStackTrace();
 		}
 	}
+	/***************************************************************************************/
+	public static void SUBMISSION_COMPLAINT(String msg,ConnectionToClient client) 
+	{
+		try 
+		{
+			String Substring = msg.substring(msg.indexOf(":")+2, msg.length());
+			String[] parts = Substring.split(" ");
+			int ComplaintID =Integer.parseInt(parts[0]);
+			int OrderID =Integer.parseInt(parts[2]);
+			String res=ConnectionToDataBaseSQL.SUBMISSION_COMPLAINT(ComplaintID,OrderID ,parts[1],parts[3]);
+			client.sendToClient(res);
+		}
+		catch (IOException e)
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	/**************************************************************************************/
+	public static void APPROVES_PRICES(String msg,ConnectionToClient client)
+	{
+		try 
+		{
+			String Substring = msg.substring(msg.indexOf(":")+2, msg.length());
+			String[] parts = Substring.split(" ");
+			String res=ConnectionToDataBaseSQL.APPROVES_PRICES();
+			client.sendToClient(res);
+		}
+		catch (IOException e)
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 
+	}
+	/***************************************************************************************/
 	//<FIRST_NAME> <LAST_NAME> <WORKER_ID> <E-MAIL> <ROLE> <ParkingID> <USERNAME> <PASSWORD>
 	public void SignUpWorker(String msg,ConnectionToClient client) {
 		try {

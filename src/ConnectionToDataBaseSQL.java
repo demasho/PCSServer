@@ -80,6 +80,75 @@ public class ConnectionToDataBaseSQL {
 		}
 		return result;
 	}
+	/***************************************************************************************/
+	public static String APPROVES_PRICES ()
+	{
+		Statement stmt;
+		try
+		{
+			stmt = conn.createStatement();
+			String deletequery;
+			deletequery="DELETE FROM Prices where status = "+ "Now";
+			String update = "update Prices set status = ? where status = 'New'";
+			stmt.close();
+			stmt.executeUpdate(deletequery);
+			stmt.executeUpdate(update);
+		} 
+		catch (SQLException e)
+		{
+			System.out.println("The Manager Not APProve The Request!!");
+			e.printStackTrace();
+			return "APPROVED FAILED";
+		}
+		return "APPROVED SUCCESSED";
+	}
+	/**************************************************************************************/
+	public static String SUBMISSION_COMPLAINT(int ComplaintID,int OrderID,String DESCRIBTION,String Time) 
+	{
+		Statement stmt;
+	
+		 java.text.SimpleDateFormat ft = 
+			      new java.text.SimpleDateFormat ("yyyy-MM-dd HH:mm:ss");
+		 DateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.ENGLISH);
+			//Date date = null;
+		/*	try 
+			{
+				date = format.parse(Time);
+			} 
+			catch (ParseException e2)
+			{
+				// TODO Auto-generated catch block
+				e2.printStackTrace();
+			}
+			Calendar cal = Calendar.getInstance();
+			cal.setTime(date);
+			try 
+			{
+				stmt = conn.createStatement();
+			} catch (SQLException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}*/
+		String result;
+		try 
+		{
+			stmt = conn.createStatement();
+			// ft.format(date);
+			String exe="INSERT INTO Complaints (`complaintID`, `description`, `orderID`, `AddDate`) VALUES" + 
+					"('"+ComplaintID+"','"+DESCRIBTION+"','"+OrderID+"','"+Time+"')";
+			stmt.executeUpdate(exe, Statement.RETURN_GENERATED_KEYS);
+			result="SUBMISSION COMPLAINT SUCCESSED";
+		}
+		catch (Exception e)
+		{
+			result="SUBMISSION COMPLAINT Failed!!!";
+			e.printStackTrace();
+			return result;
+		}
+		return result;
+	}
+	/***************************************************************************************/
+
 	public static  ResultSet GetAllSubscriper()
 	{
 		Statement stmt; 
