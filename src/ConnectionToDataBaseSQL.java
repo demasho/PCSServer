@@ -44,17 +44,16 @@ public class ConnectionToDataBaseSQL
 			//			//res=SignUp("adam", "adamPCS7" ,"adam","azzam","bla@gmail.com","Dancer","123456789","15");
 			//			System.out.println(res);
 			//	UPDATING_PRICES1(" : 10.0 10.0 10.0 10.0");
-			//			DateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.ENGLISH);
-			//			ParkingNetwork p=new ParkingNetwork();
-			//			ParkingNetwork.AddParkingLot("333", 2);
-			//			Date Start =  format.parse("2018-06-17 14:00:00");
-			//			Parking  so=ParkingNetwork.getParking("333");
-			//			System.out.println(so.getSize());
-			//			so.enterToParking(Start, "2000001", "1716719");
-			//			Monitoring s= new Monitoring();
-			//			s.StartMonitoringEndTimeForOrders();
-			String s= PayAndGo("2000001");
-			System.out.println(s);
+//						DateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.ENGLISH);
+//						ParkingNetwork.AddParkingLot("333", 2);
+//						Date Start =  format.parse("2018-06-17 14:00:00");
+//						Parking  so=ParkingNetwork.getParking("333");
+//						System.out.println(so.getSize());
+//						so.enterToParking(Start, "2000001", "1716719");
+						Monitoring s= new Monitoring();
+						s.StartMonitoringComplaints();
+//			String s=   HandleComplaints("205821473","100.01");
+//			System.out.println(s);
 		}catch(Exception e) {
 			System.out.println(e.getMessage());
 		}
@@ -79,6 +78,26 @@ public class ConnectionToDataBaseSQL
 			return result;
 		}
 		return result;
+	}
+	/***************************************************************************************/
+	public static String HandleComplaints(String ComplaintsID,String Compensation)
+	{
+		Statement stmt;
+		try
+		{
+			stmt = conn.createStatement();
+			String deletequery;
+			deletequery="DELETE FROM Complaints where complaintID = "+ ComplaintsID ;
+			stmt.executeUpdate("INSERT INTO Compensation(`ComplaintsID`, `Money`) VALUES"+ "("+Integer.parseInt(ComplaintsID)+","+Double.parseDouble(Compensation)+")");
+			stmt.executeUpdate(deletequery);
+		} 
+		catch (SQLException e)
+		{
+			System.out.println("The Manager Not APProve The Request!!");
+			e.printStackTrace();
+			return "Handle FAILED";
+		}
+		return "Handle SUCCESSED";
 	}
 	/***************************************************************************************/
 	public static String APPROVES_PRICES ()
@@ -137,40 +156,24 @@ public class ConnectionToDataBaseSQL
 		return result;
 	}
 	/**************************************************************************************/
-	public static String SUBMISSION_COMPLAINT(int ComplaintID,int OrderID,String DESCRIBTION,String Time) 
+	public static String SUBMISSION_COMPLAINT(String CustomerID,String DESCRIBTION,String ParkingID) 
 	{
 		Statement stmt;
-		java.text.SimpleDateFormat ft = 
-				new java.text.SimpleDateFormat ("yyyy-MM-dd HH:mm:ss");
-		DateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.ENGLISH);
-		//Date date = null;
-		/*	try 
-			{
-				date = format.parse(Time);
-			} 
-			catch (ParseException e2)
-			{
-				// TODO Auto-generated catch block
-				e2.printStackTrace();
-			}
-			Calendar cal = Calendar.getInstance();
-			cal.setTime(date);
-			try 
-			{
-				stmt = conn.createStatement();
-			} catch (SQLException e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
-			}*/
 		String result;
 		try 
 		{
+			DateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.ENGLISH);
+			Date now = new Date();
+			String Time=format.format(now);
 			stmt = conn.createStatement();
-			// ft.format(date);
-			String exe="INSERT INTO Complaints (`complaintID`, `description`, `orderID`, `AddDate`) VALUES" + 
-					"('"+ComplaintID+"','"+DESCRIBTION+"','"+OrderID+"','"+Time+"')";
+			String exe="INSERT INTO Complaints (`customerID`,`AddDate`, `description`, `parkingID`) VALUES" + 
+					"('"+CustomerID+"','"+Time+"','"+DESCRIBTION+"','"+ParkingID+"')";
 			stmt.executeUpdate(exe, Statement.RETURN_GENERATED_KEYS);
-			result="SUBMISSION COMPLAINT SUCCESSED";
+			ResultSet rs = stmt.getGeneratedKeys();
+			rs.next();
+			int ComplaintID = rs.getInt(1);
+			result="SUCCESSED : Your ComplaintID is "+ComplaintID;
+			
 		}
 		catch (Exception e)
 		{
@@ -190,6 +193,33 @@ public class ConnectionToDataBaseSQL
 			stmt = conn.createStatement();
 			rs = stmt.executeQuery("SELECT SubscribeID,deadline, email, IsBusiness  FROM " +
 					"MonthlySubscription");
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return rs;
+	}
+	public static  ResultSet GetAllServiceWorkersInParking(String ParkingID)
+	{
+		Statement stmt; 
+		ResultSet rs =null;
+		try {
+			stmt = conn.createStatement();
+			rs = stmt.executeQuery("SELECT WorkerID,email FROM Users WHERE role = "+" 'Service_Worker' "+" AND parkingID = "+ParkingID);
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return rs;
+	} 
+	public static  ResultSet GetAllComplaints()
+	{
+		Statement stmt; 
+		ResultSet rs =null;
+		try {
+			stmt = conn.createStatement();
+			rs = stmt.executeQuery("SELECT * FROM " +
+					"Complaints");
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -512,7 +542,7 @@ public class ConnectionToDataBaseSQL
 
 	public static String PayAndGo(String orderID) {
 		Statement stmt;
-		String deletequery,result;
+		String result;
 		try {
 			stmt = conn.createStatement();
 			stmt.executeUpdate("DELETE FROM OneTimeOrders  where orderID = "+ orderID);

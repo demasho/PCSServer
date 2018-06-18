@@ -78,4 +78,14 @@ public class SendMail
 		System.out.println("Done Send");
 	}
 	/*********************************************************************************************/
+	public static void sendAlertForComplaintEmail(String ComplaintsID ,String start,String WorkerID,String email,String ParkingID)
+	{	
+		String subject = "Alert to Handle Complaint ";
+		String msg = "Hello Worker : "+ WorkerID +" you have to handle Complaint :" + ComplaintsID  + ",\n"
+				+ "We got the complaint in : "+ start + " in parking :"+ParkingID +" you need  to handle it in 24 hours .";
+		SendMail.send(email, subject, msg);	
+		System.out.println("Done Send");
+	}
+	/*********************************************************************************************/
+
 }

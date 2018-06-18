@@ -1,5 +1,6 @@
 import java.sql.Array;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
@@ -15,6 +16,7 @@ public class Monitoring
 {	
 	private final ScheduledExecutorService Subscripers= Executors.newSingleThreadScheduledExecutor();
 	private final ScheduledExecutorService Orders= Executors.newSingleThreadScheduledExecutor();
+	private final ScheduledExecutorService Complaints= Executors.newSingleThreadScheduledExecutor();
 	public static DateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.ENGLISH);
 	/*********************************************************************************************/
 	public void StartMonitoringSubscripers() 
@@ -95,6 +97,79 @@ public class Monitoring
 				}
 			}
 		}, 0 ,59 , java.util.concurrent.TimeUnit.MINUTES);
+	}
+	/*********************************************************************************************/
+	public void StartMonitoringComplaints() 
+	{
+		final ScheduledFuture<?> taskHandleComplaints = Complaints.scheduleAtFixedRate(new Runnable()
+		{
+			public void run() 
+			{
+				JSONArray Complaints=GetAllComplaint();
+				if(Complaints.length()!=0)
+				{ 
+					try 
+					{
+						for(int i = 0; i < Complaints.length(); i ++)
+						{
+							JSONArray Workers=GetAllWorkers(Complaints.getJSONObject(i).getString("ParkingID"));
+							System.out.println(Complaints.getJSONObject(i).getString("ParkingID"));
+							for(int j=0;j<Workers.length();j++) {
+								System.out.println("Send");
+								SendMail.sendAlertForComplaintEmail(Complaints.getJSONObject(i).getString("ComplaintID"), Complaints.getJSONObject(i).getString("AddDate"), Workers.getJSONObject(j).getString("WorkerID"), Workers.getJSONObject(j).getString("email") , Complaints.getJSONObject(i).getString("ParkingID"));
+							}
+						}
+					}
+
+					catch (JSONException e)
+					{
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				}
+			}
+		}, 0 ,2 , java.util.concurrent.TimeUnit.HOURS);
+	}
+	/*********************************************************************************************/
+	private JSONArray GetAllComplaint(){
+		JSONArray AllComplaint=null;
+		try {
+			ResultSet rs=ConnectionToDataBaseSQL.GetAllComplaints();
+			AllComplaint = new JSONArray();
+			while(rs.next())
+			{
+				//`customerID`, `complaintID`, `AddDate`, `description`, `parkingID` 
+				AllComplaint.put(new JSONObject()
+						.put("ComplaintID",rs.getString(2))
+						.put("AddDate",rs.getString(3))
+						.put("Des", rs.getString(4))
+						.put("ParkingID", rs.getString(5))
+						);
+			}
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return AllComplaint;
+	}
+	/*********************************************************************************************/
+	private JSONArray GetAllWorkers(String ParkingID) {		
+		JSONArray AllWorkersInParking = new JSONArray();
+		try {
+			ResultSet rs=ConnectionToDataBaseSQL.GetAllServiceWorkersInParking(ParkingID);
+			while(rs.next())
+			{
+				//`WorkerID`,email
+				AllWorkersInParking.put(new JSONObject()
+						.put("WorkerID",rs.getString(1))
+						.put("email",rs.getString(2))
+						);
+			}
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return AllWorkersInParking;
 	}
 	/*********************************************************************************************/
 	private JSONArray GetAllAlmostExpiredSubs()

@@ -3,6 +3,8 @@ import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import com.mysql.jdbc.Util;
 import javafx.geometry.Point3D;
@@ -49,9 +51,6 @@ public class ClientHandle implements Runnable
 			case "UPDATING_PRICES":
 				UpdatingPrices( msg.toString(),client);
 				break;
-			case "TRACKING_THE_STATUS_OF_REQUEST":
-				System.out.println("one");
-				break;
 			case "CANCEL_RESERVATION":
 				CancelOrder(msg.toString(),client);
 				break;
@@ -77,7 +76,7 @@ public class ClientHandle implements Runnable
 				savingParkingSpace(msg.toString(),client);
 				break;
 			case "GET_UPDATED_PRICES":
-				 GET_UPDATED_PRICES(client);
+				GET_UPDATED_PRICES(client);
 				break;
 			case "GET_PAYMENT":
 				GET_PAYMENT(msg.toString(),client);
@@ -85,6 +84,12 @@ public class ClientHandle implements Runnable
 			case "PAY_ANDOUT":
 				PAY_ANd_GO(msg.toString(),client);
 				break;
+			case "HANDLE_COMPLAINT":
+				HandleComplaint(msg.toString(),client);
+				break;
+			case "INSERT_CAR":
+				insertCar(msg.toString(),client);
+				break ;
 			default:
 				System.out.println("no match");
 			}
@@ -94,32 +99,74 @@ public class ClientHandle implements Runnable
 		}
 	}
 
+	public void insertCar(String msg,ConnectionToClient client)
+	{
+		try {
+			String Substring = msg.substring(msg.indexOf(":")+2, msg.length());
+			String[] parts=Substring.split(" ");
+			DateFormat format = new SimpleDateFormat("yyyy-MM-dd/HH:mm:ss");
+			Date deadline = format.parse(parts[3]);
+			Date now = new Date() ;
+			if(!ParkingNetwork.containsParking(parts[0]))
+			{
+				client.sendToClient("Failed : Parking: "+parts[0]+" does not exist!");
+				return ;
+			}
+			if(deadline.before(now))
+			{
+				client.sendToClient("Failed : Invalid deadline!");
+				return ;
+			}
+			boolean entered = ParkingNetwork.getParking(parts[0]).enterToParking(deadline, parts[1], parts[2]);
+			if(entered)
+			{
+				client.sendToClient("Succeed : You've Entered The Car Successfully");
+			}
+			else client.sendToClient("Failed : Something Went Wrong While Inserting Car");
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	// <COMPLAINTID> <Compensation Money>
+	private void HandleComplaint(String string, ConnectionToClient client) {
+		try {
+			String Substring = msg.substring(msg.indexOf(":")+2, msg.length());
+			String[] parts=Substring.split(" ");
+			String ans=ConnectionToDataBaseSQL.HandleComplaints(parts[0],parts[1]);
+			client.sendToClient(ans);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+	}
 	private void PAY_ANd_GO(String string, ConnectionToClient client) {
 		try {
 			String Substring = msg.substring(msg.indexOf(":")+2, msg.length());
 			String[] parts=Substring.split(" ");
 			String ans=ConnectionToDataBaseSQL.PayAndGo(parts[0]);
-				client.sendToClient(ans);
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}		
-		
+			client.sendToClient(ans);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}		
+
 	}
 	public void GET_PAYMENT(String msg,ConnectionToClient client) {
 		try {
 			String Substring = msg.substring(msg.indexOf(":")+2, msg.length());
 			String[] parts=Substring.split(" ");
 			String ans=ConnectionToDataBaseSQL.GetPayment(parts[0]);
-				client.sendToClient(ans);
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}		
+			client.sendToClient(ans);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}		
 	}
 	public void GET_UPDATED_PRICES(ConnectionToClient client) {
 		try {
-		String ans=ConnectionToDataBaseSQL.GetUpdatedPrices();
+			String ans=ConnectionToDataBaseSQL.GetUpdatedPrices();
 			client.sendToClient(ans);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
@@ -193,20 +240,18 @@ public class ClientHandle implements Runnable
 		}
 	}
 	/***************************************************************************************/
+	//<CUSTOMER_ID> <PARKING_ID> <DESCRIBTION>
 	public static void SUBMISSION_COMPLAINT(String msg,ConnectionToClient client) 
 	{
 		try 
 		{
 			String Substring = msg.substring(msg.indexOf(":")+2, msg.length());
 			String[] parts = Substring.split(" ");
-			int ComplaintID =Integer.parseInt(parts[0]);
-			int OrderID =Integer.parseInt(parts[2]);
-			String res=ConnectionToDataBaseSQL.SUBMISSION_COMPLAINT(ComplaintID,OrderID ,parts[1],parts[3]);
+			String res=ConnectionToDataBaseSQL.SUBMISSION_COMPLAINT(parts[0],parts[2] ,parts[1]);
 			client.sendToClient(res);
 		}
 		catch (IOException e)
 		{
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}

@@ -68,6 +68,7 @@ public class Parking
 		}
 		return found ;
 	}
+	
 	/*********************************************************************************************/
 	public String getSnapshot()
 	{
@@ -148,19 +149,21 @@ public class Parking
 				++x ;
 				continue ;
 			}
-			if(x >= columns && y<rows)
+			if(x >= columns && y<rows-1)
 			{
 				++y;
 				x=0;
 				continue ;
 			}
-			if(x >= columns && y >= rows && z < floors)
+			if(x >= columns && y >= rows-1 && z < floors-1)
 			{
 				++z ;
 				y=0 ;
 				x=0 ;
 			}
-		}	
+		}
+		strBul.append(" "+savedSpaces.size());
+		
 		return strBul.toString() ;
 	}
 	/*********************************************************************************************/
