@@ -22,42 +22,43 @@ public class ConnectionToDataBaseSQL
 		System.out.println("SQL connection succeed");
 	}
 
-	public static void main(String[] args) 
-	{
-		try {
-			conncetToDataBase();
-			//				Date TIN=new Date();
-			//				TIN.setHours(12);
-			//				TIN.setMinutes(30);
-			//				TIN.setSeconds(50);
-			//				TIN.setYear(2018);
-			//				TIN.setMonth(6);
-			//				TIN.setDate(1);
-			//				java.text.SimpleDateFormat sdf = 
-			//						new java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-			//				
-			//				String D= sdf.format(TIN);
-			//<PARKING_ID> <CUSTOMER_ID> <STARTED_DATE> <E_MAIL> <IS_BUSINESS> <AMOUNT_OF_CARS> , <CAR_NUMBER>...<CAR_NUMBER>
-
-			//			int res=AddMonthlySubscription("222222222", "2000-10-15 15:15:15","bla@gmail.com" ,false,1,"11111111");
-			//			System.out.println(res);
-			//			//res=SignUp("adam", "adamPCS7" ,"adam","azzam","bla@gmail.com","Dancer","123456789","15");
-			//			System.out.println(res);
-			//	UPDATING_PRICES1(" : 10.0 10.0 10.0 10.0");
-//						DateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.ENGLISH);
-//						ParkingNetwork.AddParkingLot("333", 2);
-//						Date Start =  format.parse("2018-06-17 14:00:00");
-//						Parking  so=ParkingNetwork.getParking("333");
-//						System.out.println(so.getSize());
-//						so.enterToParking(Start, "2000001", "1716719");
-						Monitoring s= new Monitoring();
-						s.StartMonitoringComplaints();
-//			String s=   HandleComplaints("205821473","100.01");
+//	public static void main(String[] args) 
+//	{
+//		try {
+//			conncetToDataBase();
+//			//				Date TIN=new Date();
+//			//				TIN.setHours(12);
+//			//				TIN.setMinutes(30);
+//			//				TIN.setSeconds(50);
+//			//				TIN.setYear(2018);
+//			//				TIN.setMonth(6);
+//			//				TIN.setDate(1);
+//			//				java.text.SimpleDateFormat sdf = 
+//			//						new java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+//			//				
+//			//				String D= sdf.format(TIN);
+//			//<PARKING_ID> <CUSTOMER_ID> <STARTED_DATE> <E_MAIL> <IS_BUSINESS> <AMOUNT_OF_CARS> , <CAR_NUMBER>...<CAR_NUMBER>
+//
+//			//			int res=AddMonthlySubscription("222222222", "2000-10-15 15:15:15","bla@gmail.com" ,false,1,"11111111");
+//			//			System.out.println(res);
+//			//			//res=SignUp("adam", "adamPCS7" ,"adam","azzam","bla@gmail.com","Dancer","123456789","15");
+//			//			System.out.println(res);
+//			//	UPDATING_PRICES1(" : 10.0 10.0 10.0 10.0");
+////						DateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.ENGLISH);
+////						ParkingNetwork.AddParkingLot("333", 2);
+////						Date Start =  format.parse("2018-06-17 14:00:00");
+////						Parking  so=ParkingNetwork.getParking("333");
+////						System.out.println(so.getSize());
+////						so.enterToParking(Start, "2000001", "1716719");
+//			int s=AddOneTimeOrder("123456789","333","2018-06-19 11:00:00","2018-06-19 12:00:00","dema.shofe@gmail.com","1234567");
+////						Monitoring s= new Monitoring();
+////						s.StartMonitoringComplaints();
+////			String s=   HandleComplaints("205821473","100.01");
 //			System.out.println(s);
-		}catch(Exception e) {
-			System.out.println(e.getMessage());
-		}
-	}
+//		}catch(Exception e) {
+//			System.out.println(e.getMessage());
+//		}
+//	}
 	public static String UPDATING_PRICES (double CasualParking,double OneTimeOrder,double FullMonthlySubscription,double BusinessMonthlySubscription){	
 
 		Statement stmt;
@@ -379,6 +380,7 @@ public class ConnectionToDataBaseSQL
 			rs.next();
 			orderid = rs.getInt(1);
 			AddToPayment(2,orderid, TimeIn,TimeOut);
+			System.out.println("Done Write to data base");
 			stmt.close();
 		} catch (SQLException e) {
 			System.out.println(e.getMessage());

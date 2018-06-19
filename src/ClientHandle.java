@@ -30,15 +30,14 @@ public class ClientHandle implements Runnable
 			String Action =msg.toString().substring(0, msg.toString().indexOf(":")-1);
 			System.out.println(Action+"Message");
 			
-			if(Action.equals( "OneTimeOrders"))
+			if(Action.equals( "OneTimeOrders")==true)
 				OneTimeOrders(msg.toString(), client);
 				 
-			if(Action.equals( "CasualParking")==true) {
-				System.out.println(Action+" here");
+			if(Action.equals( "CasualParking")==true) 
 				CasualParkingOrder(msg.toString(), client);
-			}
+			
 				 
-			if(Action.equals( "MonthlySubscription"))
+			if(Action.equals( "MonthlySubscription")==true)
 				MonthlySubscription(msg.toString(), client);
 				 
 			if(Action.equals( "SignUp"))
@@ -177,6 +176,7 @@ public class ClientHandle implements Runnable
 	{
 		try
 		{
+			
 			String Substring = msg.substring(msg.indexOf(":")+2, msg.length());
 			String[] parts = Substring.split(" ");
 			String startdate=parts[2].replace("/", " ");
@@ -187,6 +187,7 @@ public class ClientHandle implements Runnable
 			}
 			else
 			{
+				System.out.println(" here -> OneTimeOrders");
 				int answer= ConnectionToDataBaseSQL.AddOneTimeOrder(parts[0], parts[1], startdate , enddate , parts[4], parts[5]); 
 				String status = answer==-1 ?  " Failed Try Again Later" :  " Sucessed , your Odred id = "+ answer ;
 				client.sendToClient("Your Order is"+ status);

@@ -107,7 +107,8 @@ public class Server extends AbstractServer
 		Server sv = new Server(port);
 		try 
 		{
-			sv.conncetToDataBase();;
+			ConnectionToDataBaseSQL.conncetToDataBase();
+			ParkingNetwork.AddParkingLot("333", 10);
 			sv.listen(); //Start listening for connections      
 		} 
 		catch(SQLException e)
