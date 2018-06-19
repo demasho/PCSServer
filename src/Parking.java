@@ -66,6 +66,7 @@ public class Parking
 		{
 			theParking.add(stack.pop());
 		}
+		System.out.println("got OUT car number = "+ carId);
 		return found ;
 	}
 	

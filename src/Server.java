@@ -3,7 +3,6 @@
 // license found at www.lloseng.com 
 import java.io.*;
 import java.sql.Connection;
-import java.sql.Date;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.sql.Connection;
@@ -12,6 +11,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.Date;
 //import com.sun.corba.se.impl.ior.GenericTaggedComponent;
 /**
  * This class overrides some of the methods in the abstract 
@@ -109,6 +109,8 @@ public class Server extends AbstractServer
 		{
 			ConnectionToDataBaseSQL.conncetToDataBase();
 			ParkingNetwork.AddParkingLot("333", 5);
+			Date now=new Date();
+			ParkingNetwork.getParking("333").enterToParking(now, "2000002", "1234567");
 			sv.listen(); //Start listening for connections      
 		} 
 		catch(SQLException e)
