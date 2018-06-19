@@ -27,72 +27,71 @@ public class ClientHandle implements Runnable
 		try
 		{
 			System.out.println("Message received: " + msg + " from " + client);
-			String Action =msg.toString().substring(0, msg.toString().indexOf(":"));
-			switch(Action)
-			{
-			case "OneTimeOrders":
+			String Action =msg.toString().substring(0, msg.toString().indexOf(":")-1);
+			System.out.println(Action+"Message");
+			
+			if(Action.equals( "OneTimeOrders"))
 				OneTimeOrders(msg.toString(), client);
-				break;
-			case "CasualParking":
+				 
+			if(Action.equals( "CasualParking")==true) {
+				System.out.println(Action+" here");
 				CasualParkingOrder(msg.toString(), client);
-				break;
-			case "MonthlySubscription":
-				MonthlySubscription(msg.toString(), client);
-				break;
-			case "SignUp":
-				SignUpWorker(msg.toString(), client);
-				break;
-			case "Login":
-				LoginWorker(msg.toString(),client);
-				break;
-			case "Logout":
-				LogOutWorker(msg.toString(),client);
-				break;
-			case "UPDATING_PRICES":
-				UpdatingPrices( msg.toString(),client);
-				break;
-			case "CANCEL_RESERVATION":
-				CancelOrder(msg.toString(),client);
-				break;
-			case "SUBMISSION_COMPLAINT":
-				SUBMISSION_COMPLAINT(msg.toString(),client);
-				break;
-			case "APPROVES_PRICES":
-				APPROVES_PRICES(client);
-				break;
-			case "PARKING_SNAPSHOT":
-				getParkingSnapshot(msg.toString(), client);
-				break;
-			case "REPORT_NAME":
-				System.out.println("three");
-				break;
-			case "DISABLED_PLACES_SYSTEM":
-				disabledParkingSpace(msg.toString(),client);
-				break;
-			case "INIT_SIZE_OF_PARKING":
-				addNewParking(msg.toString(), client);
-				break;
-			case "SAVING_PARKING_SPACE":
-				savingParkingSpace(msg.toString(),client);
-				break;
-			case "GET_UPDATED_PRICES":
-				GET_UPDATED_PRICES(client);
-				break;
-			case "GET_PAYMENT":
-				GET_PAYMENT(msg.toString(),client);
-				break;
-			case "PAY_ANDOUT":
-				PAY_ANd_GO(msg.toString(),client);
-				break;
-			case "HANDLE_COMPLAINT":
-				HandleComplaint(msg.toString(),client);
-				break;
-			case "INSERT_CAR":
-				insertCar(msg.toString(),client);
-				break ;
-			default:
-				System.out.println("no match");
 			}
+				 
+			if(Action.equals( "MonthlySubscription"))
+				MonthlySubscription(msg.toString(), client);
+				 
+			if(Action.equals( "SignUp"))
+				SignUpWorker(msg.toString(), client);
+				 
+			if(Action.equals( "Login"))
+				LoginWorker(msg.toString(),client);
+				 
+			if(Action.equals( "Logout"))
+				LogOutWorker(msg.toString(),client);
+				 
+			if(Action.equals( "UPDATING_PRICES"))
+				UpdatingPrices( msg.toString(),client);
+				 
+			if(Action.equals( "CANCEL_RESERVATION"))
+				CancelOrder(msg.toString(),client);
+				 
+			if(Action.equals( "SUBMISSION_COMPLAINT"))
+				SUBMISSION_COMPLAINT(msg.toString(),client);
+				 
+			if(Action.equals( "APPROVES_PRICES"))
+				APPROVES_PRICES(client);
+				 
+			if(Action.equals( "PARKING_SNAPSHOT"))
+				getParkingSnapshot(msg.toString(), client);
+				 
+			if(Action.equals( "REPORT_NAME"))
+				System.out.println("three");
+				 
+			if(Action.equals( "DISABLED_PLACES_SYSTEM"))
+				disabledParkingSpace(msg.toString(),client);
+				 
+			if(Action.equals( "INIT_SIZE_OF_PARKING"))
+				addNewParking(msg.toString(), client);
+				 
+			if(Action.equals( "SAVING_PARKING_SPACE"))
+				savingParkingSpace(msg.toString(),client);
+				 
+			if(Action.equals( "GET_UPDATED_PRICES"))
+				GET_UPDATED_PRICES(client);
+				 
+			if(Action.equals( "GET_PAYMENT"))
+				GET_PAYMENT(msg.toString(),client);
+				 
+			if(Action.equals( "PAY_ANDOUT"))
+				PAY_ANd_GO(msg.toString(),client);
+				 
+			if(Action.equals( "HANDLE_COMPLAINT"))
+				HandleComplaint(msg.toString(),client);
+				 
+			if(Action.equals( "INSERT_CAR"))
+				insertCar(msg.toString(),client);
+			 
 		}
 		catch(Exception e )
 		{
@@ -125,8 +124,7 @@ public class ClientHandle implements Runnable
 			else client.sendToClient("Failed : Something Went Wrong While Inserting Car");
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+			e.printStackTrace();}
 	}
 	// <COMPLAINTID> <Compensation Money>
 	private void HandleComplaint(String string, ConnectionToClient client) {
@@ -147,7 +145,7 @@ public class ClientHandle implements Runnable
 			String[] parts=Substring.split(" ");
 			String ans=ConnectionToDataBaseSQL.PayAndGo(parts[0]);
 			client.sendToClient(ans);
-		} catch (IOException e) {
+		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}		
