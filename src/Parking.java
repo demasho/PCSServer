@@ -214,7 +214,9 @@ public class Parking
 	/*********************************************************************************************/
 	public boolean isFull()
 	{
-		return carsInParking == size ;
+		if(theParking.size() == size)
+			return true ;
+		return false ; 
 	}
 	/*********************************************************************************************/
 	public String getBadSpaces()

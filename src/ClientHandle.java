@@ -303,7 +303,7 @@ public class ClientHandle implements Runnable
 			String[] parts = Substring.split(" ");
 			String startdate=parts[1].replace("/", " ");
 			String enddate=parts[2].replace("/", " ");
-			if(ParkingNetwork.IsParkFULL(parts[1])== true)
+			if(ParkingNetwork.IsParkFULL(parts[0])== true)
 			{
 				String availables = ParkingNetwork.getAvailableParkings();
 				if(availables.isEmpty())

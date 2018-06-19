@@ -425,17 +425,17 @@ public class ConnectionToDataBaseSQL
 			Date Deadline  = (Date) cal.getTime();
 			String DeadLine= sdf.format(Deadline);
 			stmt = conn.createStatement();
-			String exe="INSERT INTO MonthlySubscription (`customerID`, `startedDate`, `deadline`, `email`, `IsBusiness`) VALUES " +
-					"('"+CustomerID+"','"+TimeStart+"','"+DeadLine+"','"+email+"',"+IsBusniess+")";
-			stmt.executeUpdate(exe,Statement.RETURN_GENERATED_KEYS);
-			ResultSet rs = stmt.getGeneratedKeys();
-			rs.next();
-			SubscriptionID = rs.getInt(1);
 			for(int i=0 ; i<amount ; i++ ) {
 				String carStatment = "INSERT INTO Cars(`customerID`,`carNumber`) VALUES" + 
 						" "+"('"+CustomerID+"','"+parts[i]+"')";
 				stmt.executeUpdate(carStatment);
 			}	
+			String exe="INSERT INTO MonthlySubscription (`customerID`, `startedDate`, `deadline`, `email`, `IsBusiness`) VALUES " +
+					"('"+CustomerID+"','"+TimeStart+"','"+DeadLine+"','"+email+"',"+IsBusniess+")";
+			stmt.executeUpdate(exe,Statement.RETURN_GENERATED_KEYS);
+			ResultSet rs = stmt.getGeneratedKeys();
+			rs.next();
+			SubscriptionID = rs.getInt(1);			
 			if(IsBusniess==true) {
 				AddToPayment(4,SubscriptionID, TimeStart,DeadLine);
 			}else {
@@ -446,6 +446,7 @@ public class ConnectionToDataBaseSQL
 			System.out.println(e.getMessage());
 			return -1;
 		}		  	
+		System.out.println(SubscriptionID);
 		return SubscriptionID;
 	}
 	public static String CancelRESERVATION(String OrderID) {
