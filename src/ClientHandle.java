@@ -97,22 +97,17 @@ public class ClientHandle implements Runnable
 		}
 	}
 
+	//<PARKING_ID> <ORDER_ID> <PARK_ID>   
 	public void insertCar(String msg,ConnectionToClient client)
 	{
 		try {
 			String Substring = msg.substring(msg.indexOf(":")+2, msg.length());
 			String[] parts=Substring.split(" ");
 			DateFormat format = new SimpleDateFormat("yyyy-MM-dd/HH:mm:ss");
-			Date deadline = format.parse(parts[3]);
-			Date now = new Date() ;
+			Date deadline = new Date() ;
 			if(!ParkingNetwork.containsParking(parts[0]))
 			{
 				client.sendToClient("Failed : Parking: "+parts[0]+" does not exist!");
-				return ;
-			}
-			if(deadline.before(now))
-			{
-				client.sendToClient("Failed : Invalid deadline!");
 				return ;
 			}
 			boolean entered = ParkingNetwork.getParking(parts[0]).enterToParking(deadline, parts[1], parts[2]);
@@ -205,7 +200,6 @@ public class ClientHandle implements Runnable
 	{
 		try
 		{
-			System.out.println("LoginWorker");
 			String Substring = msg.substring(msg.indexOf(":")+2, msg.length());
 			String[] parts = Substring.split(" ");
 			String answer= ConnectionToDataBaseSQL.Login(parts[0], parts[1]); 
