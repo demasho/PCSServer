@@ -46,4 +46,14 @@ public class ParkingNetwork {
 		}
 		return str.toString();
 	}
+	
+	public static String getAllParkings()
+	{
+		StringBuilder str = new StringBuilder();
+		for (Entry<String, Parking> it : parknet.entrySet())
+		{
+			str.append(it.getKey()+" ");
+		}
+		return str.toString();
+	}
 }
