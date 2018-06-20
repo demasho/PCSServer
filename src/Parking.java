@@ -163,7 +163,7 @@ public class Parking
 				x=0 ;
 			}
 		}
-		strBul.append(" "+savedSpaces.size());
+		strBul.append(" "+savedSpaces.size()+" "+columns);
 		
 		return strBul.toString() ;
 	}
