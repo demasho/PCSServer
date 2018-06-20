@@ -316,7 +316,7 @@ public class ConnectionToDataBaseSQL
 				result= "There Is No UserName : "+username;
 			}
 			else{
-				ResultSet rs2 = stmt.executeQuery("SELECT password , IsOneConnected FROM " +
+				ResultSet rs2 = stmt.executeQuery("SELECT password , IsOneConnected , role FROM " +
 						"Users where username = '"+username+"'");
 				rs2.next();
 				if(rs2.getString(1).equals(password))
@@ -327,7 +327,8 @@ public class ConnectionToDataBaseSQL
 						preparedStmt.setBoolean (1,true);
 						preparedStmt.setString (2,username);
 						preparedStmt.executeUpdate();
-						result="Welcome";
+						result="Success : "+rs2.getString(3);
+						System.out.println("role :"+ rs2.getString(3));
 					}else {
 						result="You Can't Access There Is Already Someone In";
 					}			

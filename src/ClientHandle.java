@@ -205,6 +205,7 @@ public class ClientHandle implements Runnable
 	{
 		try
 		{
+			System.out.println("LoginWorker");
 			String Substring = msg.substring(msg.indexOf(":")+2, msg.length());
 			String[] parts = Substring.split(" ");
 			String answer= ConnectionToDataBaseSQL.Login(parts[0], parts[1]); 
