@@ -251,7 +251,6 @@ public class Monitoring
 				boolean isInside = ParkingNetwork.getParking(rs.getString(3)).isInsideParking(rs.getString(5),Integer.toString(rs.getInt(1)));
 				if(res == true && isInside == true)
 				{	
-					System.out.println("yooo");
 					ConnectionToDataBaseSQL.PutFine(rs.getInt(1),1.3);
 					OneTimeOrders.put(new JSONObject()
 							.put("orderID", rs.getInt(1))

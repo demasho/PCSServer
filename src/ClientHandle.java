@@ -29,74 +29,87 @@ public class ClientHandle implements Runnable
 			System.out.println("Message received: " + msg + " from " + client);
 			String Action =msg.toString().substring(0, msg.toString().indexOf(":")-1);
 			System.out.println(Action+"Message");
-			
+
 			if(Action.equals( "OneTimeOrders")==true)
 				OneTimeOrders(msg.toString(), client);
-				 
+
 			if(Action.equals( "CasualParking")==true) 
 				CasualParkingOrder(msg.toString(), client);
-			
-				 
+
+
 			if(Action.equals( "MonthlySubscription")==true)
 				MonthlySubscription(msg.toString(), client);
-				 
+
 			if(Action.equals( "SignUp"))
 				SignUpWorker(msg.toString(), client);
-				 
+
 			if(Action.equals( "Login"))
 				LoginWorker(msg.toString(),client);
-				 
+
 			if(Action.equals( "Logout"))
 				LogOutWorker(msg.toString(),client);
-				 
+
 			if(Action.equals( "UPDATING_PRICES"))
 				UpdatingPrices( msg.toString(),client);
-				 
+
 			if(Action.equals( "CANCEL_RESERVATION"))
 				CancelOrder(msg.toString(),client);
-				 
+
 			if(Action.equals( "SUBMISSION_COMPLAINT"))
 				SUBMISSION_COMPLAINT(msg.toString(),client);
-				 
+
 			if(Action.equals( "APPROVES_PRICES"))
 				APPROVES_PRICES(client);
-				 
+
 			if(Action.equals( "PARKING_SNAPSHOT"))
 				getParkingSnapshot(msg.toString(), client);
-				 
+
 			if(Action.equals( "REPORT_NAME"))
 				System.out.println("three");
-				 
+
 			if(Action.equals( "DISABLED_PLACES_SYSTEM"))
 				disabledParkingSpace(msg.toString(),client);
-				 
+
 			if(Action.equals( "INIT_SIZE_OF_PARKING"))
 				addNewParking(msg.toString(), client);
-				 
+
 			if(Action.equals( "SAVING_PARKING_SPACE"))
 				savingParkingSpace(msg.toString(),client);
-				 
+
 			if(Action.equals( "GET_UPDATED_PRICES"))
 				GET_UPDATED_PRICES(client);
-				 
+
 			if(Action.equals( "GET_PAYMENT"))
 				GET_PAYMENT(msg.toString(),client);
-				 
+
 			if(Action.equals( "PAY_ANDOUT"))
 				PAY_ANd_GO(msg.toString(),client);
-				 
+
 			if(Action.equals( "HANDLE_COMPLAINT"))
 				HandleComplaint(msg.toString(),client);
-				 
+
 			if(Action.equals( "INSERT_CAR"))
 				insertCar(msg.toString(),client);
-			 
+			
+			if(Action.equals("GET_ALL_COMPLAINT"))
+				GetAllComplaints(msg.toString(),client);
 		}
 		catch(Exception e )
 		{
 		}
 	}
-
+	// <ParkingID>
+	private void GetAllComplaints(String string, ConnectionToClient client2) {
+		try {
+			String Substring = msg.substring(msg.indexOf(":")+2, msg.length());
+			String[] parts=Substring.split(" ");
+			String ans=ConnectionToDataBaseSQL.GetcomplaintInPark(parts[0]);
+			client.sendToClient(ans);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
 	//<PARKING_ID> <ORDER_ID> <PARK_ID>   
 	public void insertCar(String msg,ConnectionToClient client)
 	{
@@ -131,8 +144,8 @@ public class ClientHandle implements Runnable
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-
 	}
+
 	private void PAY_ANd_GO(String string, ConnectionToClient client) {
 		try {
 			String Substring = msg.substring(msg.indexOf(":")+2, msg.length());
@@ -171,7 +184,7 @@ public class ClientHandle implements Runnable
 	{
 		try
 		{
-			
+
 			String Substring = msg.substring(msg.indexOf(":")+2, msg.length());
 			String[] parts = Substring.split(" ");
 			String startdate=parts[2].replace("/", " ");

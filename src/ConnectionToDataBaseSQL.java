@@ -98,7 +98,6 @@ public class ConnectionToDataBaseSQL
 		} 
 		catch (SQLException e)
 		{
-			System.out.println("The Manager Not APProve The Request!!");
 			e.printStackTrace();
 			result= "Handle FAILED";
 		}
@@ -303,6 +302,28 @@ public class ConnectionToDataBaseSQL
 			e.printStackTrace();
 		}
 	}
+	public static String GetcomplaintInPark(String ParkingID) {
+		Statement stmt; 
+		String result=" ";
+		ResultSet rs =null;
+		boolean b=false;
+		try {
+			stmt = conn.createStatement();
+			rs = stmt.executeQuery("SELECT complaintID , description FROM " +
+					"Complaints where parkingID = "+ParkingID);
+			b = rs.wasNull();
+			while(rs.next()) {
+				result += rs.getInt(1)+" -> "+rs.getString(2) + "|" ;
+			}
+		} catch (SQLException e) {
+			if(b==true)
+				result="There is no complaint ";
+			else
+				result="Failed to get";
+			e.printStackTrace();
+		}
+		return result;
+	}
 	public static String Login(String username,String password) { 
 		Statement stmt;
 		String result = null;
@@ -316,7 +337,7 @@ public class ConnectionToDataBaseSQL
 				result= "There Is No UserName : "+username;
 			}
 			else{
-				ResultSet rs2 = stmt.executeQuery("SELECT password , IsOneConnected , role FROM " +
+				ResultSet rs2 = stmt.executeQuery("SELECT password , IsOneConnected , role , parkingID FROM " +
 						"Users where username = '"+username+"'");
 				rs2.next();
 				if(rs2.getString(1).equals(password))
@@ -327,7 +348,7 @@ public class ConnectionToDataBaseSQL
 						preparedStmt.setBoolean (1,true);
 						preparedStmt.setString (2,username);
 						preparedStmt.executeUpdate();
-						result="Success : "+rs2.getString(3);
+						result="Success : "+rs2.getString(3)+" "+rs2.getString(4);
 						System.out.println("role :"+ rs2.getString(3));
 					}else {
 						result="You Can't Access There Is Already Someone In";
