@@ -9,7 +9,7 @@ import java.util.Date;
 import com.mysql.jdbc.Util;
 import javafx.geometry.Point3D;
 import java.sql.Connection;
-public class ClientHandle implements Runnable
+public class ClientHandle  
 {
 	ConnectionToClient client ;
 	String msg ;
@@ -22,7 +22,7 @@ public class ClientHandle implements Runnable
 		this.conn=conn;
 	}
 	/*********************************************************************************************/
-	public void run()
+	public void handle()
 	{
 		try
 		{

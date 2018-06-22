@@ -39,6 +39,7 @@ public class Server extends AbstractServer
 	 *
 	 * @param port The port number to connect on.
 	 */
+
 	/*********************************************************************************************/
 	public Server(int port) 
 	{
@@ -57,8 +58,7 @@ public class Server extends AbstractServer
 	(Object msg, ConnectionToClient client)
 	{
 		ClientHandle p=new ClientHandle(msg,client,conn);	 
-		Thread Go =new Thread(p);
-		Go.start();
+        p.handle();
 	}
 	/*********************************************************************************************/
 	/**
@@ -77,7 +77,8 @@ public class Server extends AbstractServer
 	 * when the server stops listening for connections.
 	 */
 	/*********************************************************************************************/
-	protected void serverStopped()
+	@Override
+	protected void serverClosed()
 	{
 		System.out.println
 		("Server has stopped listening for connections.");
@@ -92,46 +93,46 @@ public class Server extends AbstractServer
 	 *          if no argument is entered.
 	 */
 	/*********************************************************************************************/
-	public static void main(String[] args) 
-	{
-		int port = 0; //Port to listen on
 
-		try
-		{
-			port = Integer.parseInt(args[0]); //Get port from command line
-		}
-		catch(Throwable t)
-		{
-			port = DEFAULT_PORT; //Set port to 5555
-		}
+	public void start() throws Exception {
+
+		int port = 0; //Port to listen 
+
+		port = DEFAULT_PORT; //Set port to 5555
+
 		Server sv = new Server(port);
 		try 
 		{
 			ConnectionToDataBaseSQL.conncetToDataBase();
+//			Monitoring mon=new Monitoring();
+//			mon.StartMonitoringComplaints();
+//			mon.StartMonitoringEndTimeForOrders();
+//			mon.StartMonitoringEnterTimeForOrders();
+//			mon.StartMonitoringSubscripers();
 			ParkingNetwork.AddParkingLot("333", 5);
 			ParkingNetwork.AddParkingLot("111", 5);
+			ParkingNetwork.AddParkingLot("222", 8);
+			ParkingNetwork.AddParkingLot("444", 4);
+			ParkingNetwork.AddParkingLot("555", 6);
+			ParkingNetwork.AddParkingLot("666", 7);
 			Date now=new Date();
 			ParkingNetwork.getParking("333").enterToParking(now, "2000002", "1234567");
 			sv.listen(); //Start listening for connections      
 		} 
 		catch(SQLException e)
 		{
-			System.err.println("Connection to Database failed: " + e.getMessage());		
+			 throw new SQLException( "Connection to Database failed: " + e.getMessage());		
 		}
 		catch (Exception ex) 
 		{
-			System.out.println("ERROR - Could not listen for clients!");
+			 throw new Exception("ERROR - Could not listen for clients!");
 		}
 	}
-	/*********************************************************************************************/
-	public void conncetToDataBase() throws SQLException, InstantiationException, IllegalAccessException, ClassNotFoundException
-	{
-		Class.forName("com.mysql.jdbc.Driver").newInstance();
-		String url = "jdbc:mysql://cs.telhai.ac.il/Group_7";
-		String username = "cs302863774";
-		String password = "adamsAdam132";conn = DriverManager.getConnection(url, username, password);
-		System.out.println("SQL connection succeed");
+	public void Stop() throws IOException {
+		this.Stop();
+		this.stopListening();
+		this.close();
+		
 	}
-	/*********************************************************************************************/
 }
 //End of EchoServer class
