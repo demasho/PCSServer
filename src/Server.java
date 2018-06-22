@@ -109,6 +109,7 @@ public class Server extends AbstractServer
 		{
 			ConnectionToDataBaseSQL.conncetToDataBase();
 			ParkingNetwork.AddParkingLot("333", 5);
+			ParkingNetwork.AddParkingLot("111", 5);
 			Date now=new Date();
 			ParkingNetwork.getParking("333").enterToParking(now, "2000002", "1234567");
 			sv.listen(); //Start listening for connections      

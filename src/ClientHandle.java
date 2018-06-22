@@ -93,9 +93,25 @@ public class ClientHandle implements Runnable
 			
 			if(Action.equals("GET_ALL_COMPLAINT"))
 				GetAllComplaints(msg.toString(),client);
+			if(Action.equals("GET_AVAILABLE_PARKINGS"))
+				getAvailableParkings(msg.toString(),client);
 		}
 		catch(Exception e )
 		{
+		}
+	}
+	private void getAvailableParkings(String string, ConnectionToClient client)
+	{
+		try {
+			if(ParkingNetwork.getAvailableParkings().isEmpty())
+				{
+					client.sendToClient("Failed: There is no available parkings!");
+					return ;
+				}
+			client.sendToClient(ParkingNetwork.getAvailableParkings());
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 	}
 	// <ParkingID>
