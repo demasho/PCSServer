@@ -60,6 +60,9 @@ public class ClientHandle
 
 			if(Action.equals( "APPROVES_PRICES"))
 				APPROVES_PRICES(client);
+			
+			if(Action.equals( "NOT_APPROVES_PRICES"))
+				NOT_APPROVES_PRICES(client);
 
 			if(Action.equals( "PARKING_SNAPSHOT"))
 				getParkingSnapshot(msg.toString(), client);
@@ -103,6 +106,19 @@ public class ClientHandle
 		catch(Exception e )
 		{
 		}
+	}
+private void NOT_APPROVES_PRICES(ConnectionToClient client2) {
+	try 
+	{
+		String res=ConnectionToDataBaseSQL.Not_APPROVES_PRICES();
+		client.sendToClient(res);
+	}
+	catch (IOException e)
+	{
+		// TODO Auto-generated catch block
+		e.printStackTrace();
+	}
+		
 	}
 /*********************************************************************************************/
 	private void getAllParkings(String string, ConnectionToClient client) {

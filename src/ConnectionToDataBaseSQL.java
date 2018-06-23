@@ -620,4 +620,26 @@ public class ConnectionToDataBaseSQL
 		}
 	}
 
+	public static String Not_APPROVES_PRICES() {
+		Statement stmt;
+		String result=null;
+		try
+		{
+			stmt = conn.createStatement();
+			String deletequery;
+			deletequery="DELETE FROM Prices where status = "+ " 'New' ";
+			stmt.executeUpdate(deletequery);
+			result= "NOT TO APPROVE SUCCESSED";
+		} 
+		catch (SQLException e)
+		{
+			System.out.println("The Manager Not APProve The Request!!");
+			e.printStackTrace();
+			result= "NOT TO APPROVE FAILED";
+		}
+		finally {
+			return result;
+		}
+	}
+
 }
