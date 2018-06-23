@@ -500,44 +500,56 @@ public class ConnectionToDataBaseSQL
 		String update = "update Payment set Pay = ? where orderID = ?";
 		DateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.ENGLISH);
 		try {
-			if(OrderID.charAt(0)=='1') {
-				quary="SELECT timeIn FROM CasualParking where orderID = "+ OrderID;
-				deletequery="DELETE FROM CasualParking where orderID = "+ OrderID;
+			if(OrderID.charAt(0)=='3') {
+				quary="SELECT customerID FROM MonthlySubscription where orderID = "+ OrderID;
+				deletequery="DELETE FROM MonthlySubscription where orderID = "+ OrderID;
+				stmt = conn.createStatement();
+				ResultSet rs = stmt.executeQuery(quary);
+				rs.next();
+				String ID=rs.getString(1);
+				stmt.executeUpdate(deletequery);
+				stmt.executeUpdate("DELETE FROM Cars where customerID = "+ ID);
+				result="Cancel Reservation Sucessed ";
 			}
-			if(OrderID.charAt(0)=='2') {
-				quary="SELECT timeIn FROM OneTimeOrders where orderID = "+ OrderID;
-				deletequery="DELETE FROM OneTimeOrders where orderID = "+ OrderID;
-			}
-			stmt = conn.createStatement();
-			ResultSet rs = stmt.executeQuery(quary);
-			rs.next();
-			Date now =new  Date();
-			Date Start =  format.parse(rs.getString(1));
-			long diff = Start.getTime() - now.getTime();
-			double hours =  (diff / (1000.0*60.0*60.0));
-			System.out.println(now.getHours()+":"+now.getMinutes());
-			System.out.println(hours);
-			double persent;
-			if(hours > 3.0) {
-				persent=0.1;
-			}else {
-				if(hours > 1.0) {
-					persent=0.5;
-				}else {
-					persent=1.0;
+			else {
+				if(OrderID.charAt(0)=='1') {
+					quary="SELECT timeIn FROM CasualParking where orderID = "+ OrderID;
+					deletequery="DELETE FROM CasualParking where orderID = "+ OrderID;
 				}
+				if(OrderID.charAt(0)=='2') {
+					quary="SELECT timeIn FROM OneTimeOrders where orderID = "+ OrderID;
+					deletequery="DELETE FROM OneTimeOrders where orderID = "+ OrderID;
+				}
+				stmt = conn.createStatement();
+				ResultSet rs = stmt.executeQuery(quary);
+				rs.next();
+				Date now =new  Date();
+				Date Start =  format.parse(rs.getString(1));
+				long diff = Start.getTime() - now.getTime();
+				double hours =  (diff / (1000.0*60.0*60.0));
+				System.out.println(now.getHours()+":"+now.getMinutes());
+				System.out.println(hours);
+				double persent;
+				if(hours > 3.0) {
+					persent=0.1;
+				}else {
+					if(hours > 1.0) {
+						persent=0.5;
+					}else {
+						persent=1.0;
+					}
+				}
+				rs = stmt.executeQuery("SELECT Pay FROM Payment where orderID = "+ OrderID);
+				rs.next();
+				PreparedStatement preparedStmt = conn.prepareStatement(update);
+				double pay= rs.getDouble(1)*persent;
+				System.out.println(pay + " "+rs.getDouble(1) );
+				preparedStmt.setDouble(1,pay);
+				preparedStmt.setString (2,OrderID);
+				preparedStmt.executeUpdate();
+				result="Cancel Reservation Sucessed : but you have to Pay : "+( rs.getDouble(1)*persent);
+				stmt.executeUpdate(deletequery);
 			}
-			rs = stmt.executeQuery("SELECT Pay FROM Payment where orderID = "+ OrderID);
-			rs.next();
-			PreparedStatement preparedStmt = conn.prepareStatement(update);
-			double pay= rs.getDouble(1)*persent;
-			System.out.println(pay + " "+rs.getDouble(1) );
-			preparedStmt.setDouble(1,pay);
-			preparedStmt.setString (2,OrderID);
-			preparedStmt.executeUpdate();
-			result="Cancel Reservation Sucessed : but you have to Pay : "+( rs.getDouble(1)*persent);
-			stmt.executeUpdate(deletequery);
-
 		} catch (Exception e) {
 			result="Cancel Reservation Failed";
 			e.printStackTrace();
