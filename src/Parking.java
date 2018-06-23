@@ -31,14 +31,14 @@ public class Parking
 	public boolean enterToParking(Date deadline , String orderid , String carID)
 	{
 		ParkingSpace space = new ParkingSpace(deadline,orderid,carID);
-		if(savedSpaces.contains(orderid))
+		if(savedSpaces.contains(orderid) && !theParking.contains(space))
 		{
 			theParking.add(space);
 			savedSpaces.remove(orderid);
 			carsInParking++ ;
 			return true ;
 		}
-		if(carsInParking < size - savedSpaces.size())
+		if(carsInParking < size - savedSpaces.size() && !theParking.contains(space))
 		{
 			theParking.add(space);
 			carsInParking++ ;
@@ -73,9 +73,10 @@ public class Parking
 	/*********************************************************************************************/
 	public String getSnapshot()
 	{
-		int content = carsInParking - badSpaces.size() ;
+		int content = carsInParking ;
 		StringBuilder strBul = new StringBuilder() ;
-		int x=0 , y=0 , z=0 , badSpotCounter = badSpaces.size() ;
+		int x=0 , y=0 , z=0 , badSpotCounter = 0 ;
+		System.out.println(badSpotCounter);
 		while(content > 0)
 		{
 			Point3D p = new Point3D(x,y,z);
@@ -101,8 +102,8 @@ public class Parking
 				strBul.append(',');
 				strBul.append(z);
 				strBul.append(") ");
-				--badSpotCounter ;
-				--content ;
+				++badSpotCounter ;
+				//--content ;
 				++x ;
 				continue ;
 			}
@@ -119,7 +120,7 @@ public class Parking
 				x=0 ;
 			}
 		}
-		int available = size - carsInParking + badSpotCounter ;
+		int available = size - carsInParking - badSpotCounter ;
 		while(available > 0 )
 		{
 			Point3D p = new Point3D(x,y,z);
@@ -163,7 +164,7 @@ public class Parking
 				x=0 ;
 			}
 		}
-		strBul.append(" "+savedSpaces.size()+" "+columns);
+		strBul.append(savedSpaces.size()+" "+columns);
 		
 		return strBul.toString() ;
 	}
@@ -173,7 +174,6 @@ public class Parking
 		if(p.getX() < columns && p.getY() < rows && p.getY() < floors)
 		{
 			badSpaces.addElement(p);
-			++carsInParking;
 		}
 	}
 	/*********************************************************************************************/
@@ -183,7 +183,6 @@ public class Parking
 		{
 			badSpaces.removeElement(p);
 		}
-		--carsInParking;
 	}
 	/*********************************************************************************************/
 	//return true if the parking is not full and succeeded saving a parkSpace   

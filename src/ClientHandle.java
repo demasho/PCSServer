@@ -93,13 +93,32 @@ public class ClientHandle
 			
 			if(Action.equals("GET_ALL_COMPLAINT"))
 				GetAllComplaints(msg.toString(),client);
+			
 			if(Action.equals("GET_AVAILABLE_PARKINGS"))
 				getAvailableParkings(msg.toString(),client);
+			
+			if(Action.equals("GET_ALL_PARKINGS"))
+				getAllParkings(msg.toString(),client);
 		}
 		catch(Exception e )
 		{
 		}
 	}
+/*********************************************************************************************/
+	private void getAllParkings(String string, ConnectionToClient client) {
+		try {
+			if(ParkingNetwork.getAllParkings().isEmpty())
+				{
+					client.sendToClient("Failed : There is no parkings!");
+					return ;
+				}
+			client.sendToClient(ParkingNetwork.getAllParkings());
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+/*********************************************************************************************/
 	private void getAvailableParkings(String string, ConnectionToClient client)
 	{
 		try {
@@ -114,6 +133,7 @@ public class ClientHandle
 			e.printStackTrace();
 		}
 	}
+/*********************************************************************************************/	
 	// <ParkingID>
 	private void GetAllComplaints(String string, ConnectionToClient client2) {
 		try {
@@ -126,6 +146,7 @@ public class ClientHandle
 			e.printStackTrace();
 		}
 	}
+/*********************************************************************************************/
 	//<PARKING_ID> <ORDER_ID> <PARK_ID>   
 	public void insertCar(String msg,ConnectionToClient client)
 	{
@@ -149,6 +170,7 @@ public class ClientHandle
 			// TODO Auto-generated catch block
 			e.printStackTrace();}
 	}
+/*********************************************************************************************/
 	// <COMPLAINTID> <Compensation Money>
 	private void HandleComplaint(String string, ConnectionToClient client) {
 		try {
@@ -161,7 +183,7 @@ public class ClientHandle
 			e.printStackTrace();
 		}
 	}
-
+/*********************************************************************************************/
 	private void PAY_ANd_GO(String string, ConnectionToClient client) {
 		try {
 			String Substring = msg.substring(msg.indexOf(":")+2, msg.length());
@@ -174,6 +196,7 @@ public class ClientHandle
 		}		
 
 	}
+/*********************************************************************************************/
 	public void GET_PAYMENT(String msg,ConnectionToClient client) {
 		try {
 			String Substring = msg.substring(msg.indexOf(":")+2, msg.length());
@@ -185,6 +208,7 @@ public class ClientHandle
 			e.printStackTrace();
 		}		
 	}
+/*********************************************************************************************/
 	public void GET_UPDATED_PRICES(ConnectionToClient client) {
 		try {
 			String ans=ConnectionToDataBaseSQL.GetUpdatedPrices();
