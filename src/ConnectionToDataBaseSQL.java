@@ -501,8 +501,8 @@ public class ConnectionToDataBaseSQL
 		DateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.ENGLISH);
 		try {
 			if(OrderID.charAt(0)=='3') {
-				quary="SELECT customerID FROM MonthlySubscription where orderID = "+ OrderID;
-				deletequery="DELETE FROM MonthlySubscription where orderID = "+ OrderID;
+				quary="SELECT customerID FROM MonthlySubscription where SubscribeID = "+ OrderID;
+				deletequery="DELETE FROM MonthlySubscription where SubscribeID = "+ OrderID;
 				stmt = conn.createStatement();
 				ResultSet rs = stmt.executeQuery(quary);
 				rs.next();
