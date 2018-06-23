@@ -104,11 +104,11 @@ public class Server extends AbstractServer
 		try 
 		{
 			ConnectionToDataBaseSQL.conncetToDataBase();
-			Monitoring mon=new Monitoring();
-			mon.StartMonitoringComplaints();
-			mon.StartMonitoringEndTimeForOrders();
-			mon.StartMonitoringEnterTimeForOrders();
-			mon.StartMonitoringSubscripers();
+//			Monitoring mon=new Monitoring();
+//			mon.StartMonitoringComplaints();
+//			mon.StartMonitoringEndTimeForOrders();
+//			mon.StartMonitoringEnterTimeForOrders();
+//			mon.StartMonitoringSubscripers();
 			ParkingNetwork.AddParkingLot("333", 5);
 			ParkingNetwork.AddParkingLot("111", 5);
 			ParkingNetwork.AddParkingLot("222", 8);
