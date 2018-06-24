@@ -37,7 +37,7 @@ public class Monitoring
 						catch (JSONException e)
 						{
 							// TODO Auto-generated catch block
-							e.printStackTrace();
+							
 						}
 					}
 				}
@@ -58,13 +58,13 @@ public class Monitoring
 					{
 						try 
 						{
-							System.out.println("Send");
+							
 							SendMail.sendLateAlertMessage(orders.getJSONObject(i).getString("orderID"),orders.getJSONObject(i).getString("start"),orders.getJSONObject(i).getString("parkingID") ,orders.getJSONObject(i).getString("email"));
 						}
 						catch (JSONException e)
 						{
 							// TODO Auto-generated catch block
-							e.printStackTrace();
+							
 						}
 					}
 				}
@@ -85,13 +85,13 @@ public class Monitoring
 					{
 						try
 						{
-							System.out.println("Send");
+							
 							SendMail.sendExcessionEmail(orders.getJSONObject(i).getString("orderID"),orders.getJSONObject(i).getString("start"),orders.getJSONObject(i).getString("parkingID") ,orders.getJSONObject(i).getString("email"));
 						} 
 						catch (JSONException e) 
 						{
 							// TODO Auto-generated catch block
-							e.printStackTrace();
+							
 						}
 					}
 				}
@@ -113,9 +113,8 @@ public class Monitoring
 						for(int i = 0; i < Complaints.length(); i ++)
 						{
 							JSONArray Workers=GetAllWorkers(Complaints.getJSONObject(i).getString("ParkingID"));
-							System.out.println(Complaints.getJSONObject(i).getString("ParkingID"));
 							for(int j=0;j<Workers.length();j++) {
-								System.out.println("Send");
+								
 								SendMail.sendAlertForComplaintEmail(Complaints.getJSONObject(i).getString("ComplaintID"), Complaints.getJSONObject(i).getString("AddDate"), Workers.getJSONObject(j).getString("WorkerID"), Workers.getJSONObject(j).getString("email") , Complaints.getJSONObject(i).getString("ParkingID"));
 							}
 						}
@@ -124,7 +123,7 @@ public class Monitoring
 					catch (JSONException e)
 					{
 						// TODO Auto-generated catch block
-						e.printStackTrace();
+						
 					}
 				}
 			}
@@ -148,7 +147,7 @@ public class Monitoring
 			}
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+			
 		}
 		return AllComplaint;
 	}
@@ -167,7 +166,7 @@ public class Monitoring
 			}
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+			
 		}
 		return AllWorkersInParking;
 	}
@@ -181,11 +180,11 @@ public class Monitoring
 		try {
 			while(rs.next())
 			{
-				System.out.println(rs.getInt(1));
+				
 				DeadLine =  format.parse(rs.getString(2));
 				long diff = DeadLine.getTime() - now.getTime();
 				int days=(int) (diff / (1000*60*60*24));
-				System.out.println(days);
+				
 				if(days<=7)
 				{
 					subscriptions.put(new JSONObject()
@@ -199,7 +198,7 @@ public class Monitoring
 		}
 		catch(Exception e)
 		{
-			e.printStackTrace();
+			
 		}
 		return subscriptions;
 	}
@@ -231,7 +230,7 @@ public class Monitoring
 		}
 		catch(Exception e)
 		{
-			e.printStackTrace();
+			
 		}
 		return OneTimeOrders;
 	}
@@ -263,7 +262,7 @@ public class Monitoring
 		}
 		catch(Exception e)
 		{
-			e.printStackTrace();
+			
 		}
 		return OneTimeOrders;
 	}

@@ -67,13 +67,11 @@ public class ConnectionToDataBaseSQL
 			stmt = conn.createStatement();
 			String query="INSERT INTO Prices (`CasualParking`,`OneTimeOrders`,`FullMonthlySubscription`,`BusinessMonthlySubscription`,`status`) VALUES " +
 					"("+CasualParking+","+OneTimeOrder+","+FullMonthlySubscription+","+BusinessMonthlySubscription+",'New')";
-			System.out.println(query);
 			stmt.executeUpdate(query);
 			result="Updating is Successed";	
 			stmt.close();
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
-			System.out.println("You Can't make Updating Sorry!!");
 			e.printStackTrace();
 			result="You Can't make Updating Sorry!!";
 			return result;
@@ -125,7 +123,6 @@ public class ConnectionToDataBaseSQL
 		} 
 		catch (SQLException e)
 		{
-			System.out.println("The Manager Not APProve The Request!!");
 			e.printStackTrace();
 			result= "APPROVED FAILED";
 		}
@@ -349,7 +346,6 @@ public class ConnectionToDataBaseSQL
 						preparedStmt.setString (2,username);
 						preparedStmt.executeUpdate();
 						result="Success : "+rs2.getString(3)+" "+rs2.getString(4);
-						System.out.println("role :"+ rs2.getString(3));
 					}else {
 						result="You Can't Access There Is Already Someone In";
 					}			
@@ -392,7 +388,6 @@ public class ConnectionToDataBaseSQL
 			ResultSet rs = stmt.executeQuery("SELECT Count(userName) FROM " +
 					"Users where username = '"+username+"'");
 			rs.next();
-			System.out.println(rs.getInt(1));
 			if(rs.getInt(1) != 0) {
 				result= "There Is Aleardy someone with the same UserName : "+username;
 			}
@@ -423,7 +418,6 @@ public class ConnectionToDataBaseSQL
 			rs.next();
 			orderid = rs.getInt(1);
 			AddToPayment(2,orderid, TimeIn,TimeOut);
-			System.out.println("Done Write to data base");
 			stmt.close();
 		} catch (SQLException e) {
 			System.out.println(e.getMessage());
@@ -527,8 +521,6 @@ public class ConnectionToDataBaseSQL
 				Date Start =  format.parse(rs.getString(1));
 				long diff = Start.getTime() - now.getTime();
 				double hours =  (diff / (1000.0*60.0*60.0));
-				System.out.println(now.getHours()+":"+now.getMinutes());
-				System.out.println(hours);
 				double persent;
 				if(hours > 3.0) {
 					persent=0.1;
@@ -543,7 +535,6 @@ public class ConnectionToDataBaseSQL
 				rs.next();
 				PreparedStatement preparedStmt = conn.prepareStatement(update);
 				double pay= rs.getDouble(1)*persent;
-				System.out.println(pay + " "+rs.getDouble(1) );
 				preparedStmt.setDouble(1,pay);
 				preparedStmt.setString (2,OrderID);
 				preparedStmt.executeUpdate();
@@ -645,7 +636,6 @@ public class ConnectionToDataBaseSQL
 		} 
 		catch (SQLException e)
 		{
-			System.out.println("The Manager Not APProve The Request!!");
 			e.printStackTrace();
 			result= "NOT TO APPROVE FAILED";
 		}

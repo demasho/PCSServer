@@ -66,7 +66,6 @@ public class Parking
 		{
 			theParking.add(stack.pop());
 		}
-		System.out.println("got OUT car number = "+ carId);
 		return found ;
 	}
 	
@@ -76,7 +75,6 @@ public class Parking
 		int content = carsInParking ;
 		StringBuilder strBul = new StringBuilder() ;
 		int x=0 , y=0 , z=0 , badSpotCounter = 0 ;
-		System.out.println(badSpotCounter);
 		while(content > 0)
 		{
 			Point3D p = new Point3D(x,y,z);

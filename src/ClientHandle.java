@@ -28,7 +28,6 @@ public class ClientHandle
 		{
 			System.out.println("Message received: " + msg + " from " + client);
 			String Action =msg.toString().substring(0, msg.toString().indexOf(":")-1);
-			System.out.println(Action+"Message");
 
 			if(Action.equals( "OneTimeOrders")==true)
 				OneTimeOrders(msg.toString(), client);
@@ -66,9 +65,6 @@ public class ClientHandle
 
 			if(Action.equals( "PARKING_SNAPSHOT"))
 				getParkingSnapshot(msg.toString(), client);
-
-			if(Action.equals( "REPORT_NAME"))
-				System.out.println("three");
 
 			if(Action.equals( "DISABLED_PLACES_SYSTEM"))
 				disabledParkingSpace(msg.toString(),client);
@@ -251,7 +247,6 @@ private void NOT_APPROVES_PRICES(ConnectionToClient client2) {
 			}
 			else
 			{
-				System.out.println(" here -> OneTimeOrders");
 				int answer= ConnectionToDataBaseSQL.AddOneTimeOrder(parts[0], parts[1], startdate , enddate , parts[4], parts[5]); 
 				String status = answer==-1 ?  " Failed Try Again Later" :  " Sucessed , your Odred id = "+ answer ;
 				client.sendToClient("Your Order is"+ status);

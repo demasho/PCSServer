@@ -129,9 +129,9 @@ public class Server extends AbstractServer
 		}
 	}
 	public void Stop() throws IOException {
-		this.Stop();
 		this.stopListening();
 		this.close();
+		System.exit(1);
 		
 	}
 }

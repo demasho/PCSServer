@@ -32,7 +32,6 @@ public class SendMail
 			message.setSubject(subject);
 			message.setText(msg);
 			Transport.send(message);
-			System.out.println("Done Sending mail to : "+ to);
 		}
 		catch (MessagingException e)
 		{
@@ -75,7 +74,6 @@ public class SendMail
 				+ "According to the information we have, You have exceeded your parking limit time : "+ enddate + " at Parking : "+ ParkingID
 				+ ",\n You are asked to come and collect your car as fast as possible.\nThank you,\nCPS team.";
 		SendMail.send(email, subject, msg);	
-		System.out.println("Done Send");
 	}
 	/*********************************************************************************************/
 	public static void sendAlertForComplaintEmail(String ComplaintsID ,String start,String WorkerID,String email,String ParkingID)
@@ -84,7 +82,6 @@ public class SendMail
 		String msg = "Hello Worker : "+ WorkerID +" you have to handle Complaint :" + ComplaintsID  + ",\n"
 				+ "We got the complaint in : "+ start + " in parking :"+ParkingID +" you need  to handle it in 24 hours .";
 		SendMail.send(email, subject, msg);	
-		System.out.println("Done Send");
 	}
 	/*********************************************************************************************/
 
